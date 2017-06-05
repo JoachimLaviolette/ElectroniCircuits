@@ -12,6 +12,8 @@ public class Circuit
 		
 	public Circuit(ArrayList<Composant> liste_composants, ArrayList<Liaison> liste_liaisons, String[][] tdv)
 	{
+		this.liste_composants = new ArrayList<Composant>();
+		this.liste_liaisons = new ArrayList<Liaison>();
 		this.setNb_composants(calculer_nb_composants());
 		this.setNb_liaisons(calculer_nb_liaisons());
 		this.setListe_composants(liste_composants);
@@ -46,46 +48,57 @@ public class Circuit
 		return(this.getListe_liaisons().size());
 	}
 	
-	public int calculer_nb_entrees(String[] entrees)
+	public int calculer_nb_entrees()
 	{
-		int a = 0;
 		int somme = 0;
 		for(int i = 0; i < this.getListe_composants().size(); i++)
 			if(this.getListe_composants().get(i).getType().equals("IN"))
-			{
 				somme++;
+		return somme;
+	}
+	
+	public void remplir_noms_entrees(String[] entrees)
+	{
+		int a = 0;
+		for(int i = 0; i < this.getListe_composants().size(); i++)
+			if(this.getListe_composants().get(i).getType().equals("IN"))
+			{
 				entrees[a] = this.getListe_composants().get(i).getNom(); //enregistre le nom de chaque composant IN
 				a++;
 			}
-		return somme;
 	}
 		
 	public void generer_tdv()
 	{
-		String[] entrees = null;
-		int nb_entrees = calculer_nb_entrees(entrees);
-		for(int i = 0; i < (int)Math.pow(2,nb_entrees); i++) //génère des nombres en binaire allant de 0 à 2^k entrées
+		int nb_entrees = calculer_nb_entrees();
+		String[] entrees = new String[nb_entrees];
+		this.remplir_noms_entrees(entrees);
+		for(int i = 0; i < (int)Math.pow(2, nb_entrees); i++) //génère des nombres en binaire allant de 0 à 2^k entrées
 		{
-			String binaire = Integer.toBinaryString(i); //convertit le nombre en binaire
-			this.getTdv()[i+1][0] = binaire;
-			this.getTdv()[i+1][1] = calculer_tdv_sortie(binaire);
+			String binaire = Integer.toBinaryString(i); //convertit le nombre en chaine binaire
+			while(binaire.length() != nb_entrees) //la chaine doit être composée d'autant de bits qu'il y a d'entrées
+				binaire = "0" + binaire; 
+			this.setValTdv(0, i+1, binaire); //0 0 0
+			this.setValTdv(i+1, 1, calculer_tdv_sortie(binaire)); //1
 		}
 	}
 	
 	public void afficher_tdv()
 	{
-		String[] entrees = {};
 		String tdv = new String("  ");
-		int nb_entrees = calculer_nb_entrees(entrees); //passe en paramètre le tableau "entrees" qui va etre rempli avec le nom de chaque composant IN
+		int nb_entrees = calculer_nb_entrees();
+		String[] entrees = new String[nb_entrees];
+		this.remplir_noms_entrees(entrees);
+		tdv += " ";
 		for(int i = 0; i < nb_entrees; i++)
 			tdv += entrees[i] + " ";
 		tdv += "| Sortie\n";	
-		for(int i = 0; i < (int)Math.pow(2,nb_entrees); i++) //génère des nombres en binaire allant de 0 à 2^k entrées
+		for(int i = 0; i < (int)Math.pow(2, nb_entrees); i++) //génère des nombres en binaire allant de 0 à 2^k entrées
 		{
-			String binaire = Integer.toBinaryString(i); //convertit le nombre en binaire
-			for(int a = 0; a < binaire.length(); a++) //parcourt la chaine binaire
-				tdv += binaire.charAt(a) + " ";	//ajoute chaque caractère de la chaine binaire
-			tdv += "| " + this.getTdv()[i+1][1] + "\n"; //afficher la ligne de la tdv correspondant à la chaine binaire (nombre)
+			tdv += " ";
+			for(int a = 0; a < this.getValTdv(0, i+1).length(); a++) //parcourt la chaine binaire du nombre , ex : 01011 pour générer : "0 1 0 1 1 "
+				tdv += this.getValTdv(0, i+1).charAt(a) + " ";	//ajoute chaque caractère de la chaine binaire avec un espace entre eux
+			tdv += "| " + this.getTdv()[i+1][1] + "\n"; //affiche la valeur de vérité au nombre binaire (chaine) 
 		}
 		System.out.println(tdv);
 	}
@@ -99,10 +112,10 @@ public class Circuit
 		{
 			Liaison li = this.getListe_liaisons().get(i);
 			String li_nom = li.getC1().getNom();
-			if(li.getC1().getType().equals("AND") || li.getC1().getType().equals("OR") || li.getC1().getType().equals("XOR")) 
+			if(li.getC1().getType().equals("AND") || li.getC1().getType().equals("OR") || li.getC1().getType().equals("XOR")) //2 entrées
 			{
-				int bit_0 = 0;
-				int bit_1 = 0;
+				int bit_0 = 0; //entrée 1
+				int bit_1 = 0; //entrée 2
 				int a = 0;
 				for(int j = 0; j < this.getNb_liaisons(); j++)
 				{
@@ -127,6 +140,30 @@ public class Circuit
 			li.getC1().setBit_sortie(str);
 		}
 		return str;
+	}
+	
+	public String getValTdv(int x, int y)
+	{
+		return (this.getTdv()[x][y]);
+	}
+	
+	public void setValTdv(int x, int y, String val)
+	{
+		this.getTdv()[x][y] = val;
+	}
+	
+	public void afficherInformations()
+	{
+		System.out.println("\n               :::::::::: INFORMATIONS SUR LE CIRCUIT CHARGE ::::::::::\n\n" 
+				+ "               Ce circuit comporte : \n"
+				+ "               " + this.getNb_composants() + " composants \n"
+				+ "               " + this.getNb_liaisons() + " liaisons \n\n"
+				+ "               Ses composants sont : \n");
+		for(int i = 0; i < this.getNb_composants(); i++)
+			System.out.println("               " + this.getListe_composants().get(i).getChaine());
+		System.out.println("\n               Ses liaisons sont : \n");
+		for(int i = 0; i < this.getNb_liaisons(); i++)
+			System.out.println("               " + this.getListe_liaisons().get(i).getChaine());
 	}
 		
 	//-------------------------------------------------- accesseurs et mutateurs --------------------------------------------------//

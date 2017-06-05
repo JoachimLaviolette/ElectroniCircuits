@@ -5,6 +5,8 @@ public class Test_sur_fichiers
 	public static void main(String[] args)
 	{
 		ChargerFichier c = new ChargerFichier();
-		SauvegarderFichier s = new SauvegarderFichier("Blabla");
+		c.charger_circuit();
+		c.afficher_resultats();
+		//SauvegarderFichier s = new SauvegarderFichier("Blabla");
 	}
 }

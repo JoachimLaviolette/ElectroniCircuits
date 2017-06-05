@@ -40,7 +40,7 @@ public class FichierCircuit
 		        }
 		        buffer.close();
 		        lecteur.close();
-		        System.out.println("[SUCCES] Le contenu du fichier a bien été chargé !");
+		        System.out.println("[SUCCES] Le contenu du fichier a bien été chargé ! \n");
 		    }
 			catch(IOException e)
 			{
@@ -57,7 +57,6 @@ public class FichierCircuit
 	public void lire()
 	{
 		this.setContenu(this.chargerContenu());
-		System.out.println(this.getContenu());
 	}
 	
 	public void sauvegarder(String url_fichier_circuit, String nom_fichier_circuit)

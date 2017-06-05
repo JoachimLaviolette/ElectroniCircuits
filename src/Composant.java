@@ -95,19 +95,14 @@ public class Composant
 		this.getTdv()[x+1][y+1] = val;;
 	}
 	
-	public String getBit(int i) //premier bit : 0, deuxième bit : 1
+	public String getBitEntree(int i) //premier bit : 0, deuxième bit : 1
 	{
 		return this.getListeBits_entree().get(i);
 	}
 	
-	public String getBitSortie()
+	public void setBitEntree(int i, String val)
 	{
-		return this.bit_sortie;
-	}
-	
-	public void setBitSortie(String val)
-	{
-		this.bit_sortie = val;
+		this.getListeBits_entree().set(i, val);
 	}
 	
 	public String generer_chaine()

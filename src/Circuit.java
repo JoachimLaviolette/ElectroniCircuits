@@ -49,7 +49,7 @@ public class Circuit
 			}
 		return somme;
 	}
-	
+		
 	public void generer_tdv()
 	{
 		String[] entrees = null;
@@ -75,16 +75,16 @@ public class Circuit
 			String binaire = Integer.toBinaryString(i); //convertit le nombre en binaire
 			for(int a = 0; a < binaire.length(); a++) //parcourt la chaine binaire
 				tdv += binaire.charAt(a) + " ";	//ajoute chaque caractère de la chaine binaire
-			//afficher la ligne de la tdv correspondant à la chaine binaire (nombre)
-			tdv += "| " + this.getTdv()[i+1][1] + "\n";			
+			tdv += "| " + this.getTdv()[i+1][1] + "\n"; //afficher la ligne de la tdv correspondant à la chaine binaire (nombre)
 		}
+		System.out.println(tdv);
 	}
 	
 	public String calculer_tdv_sortie(String binaire)
 	{
 		String str = new String("");
 		for(int m = 0; m < binaire.length(); m++)
-			this.getListe_composants().get(this.getListe_composants().indexOf("in" + (m + 1))).setBitSortie(binaire.charAt(m) + ""); //on affecte à chaque porte IN son bit de sortie
+			this.getListe_composants().get(this.getListe_composants().indexOf("in" + (m + 1))).setBit_sortie(binaire.charAt(m) + ""); //on affecte à chaque porte IN son bit de sortie
 		for(int i = 0; i < this.getNb_liaisons(); i++)
 		{
 			Liaison li = this.getListe_liaisons().get(i);
@@ -98,11 +98,11 @@ public class Circuit
 				{
 					if(this.getListe_liaisons().get(j).getC2().getNom().equals(li_nom) && a == 0)
 					{
-						bit_0 = Integer.parseInt(this.getListe_liaisons().get(j).getC1().getBitSortie());
+						bit_0 = Integer.parseInt(this.getListe_liaisons().get(j).getC1().getBit_sortie());
 						a++;
 					}					
 					else if(this.getListe_liaisons().get(j).getC2().getNom().equals(li_nom) && a == 1)
-						bit_1 = Integer.parseInt(this.getListe_liaisons().get(j).getC1().getBitSortie());					
+						bit_1 = Integer.parseInt(this.getListe_liaisons().get(j).getC1().getBit_sortie());					
 				}
 				str = li.getC1().getValTdv(bit_0, bit_1);
 			}
@@ -111,10 +111,10 @@ public class Circuit
 				int bit = 0;
 				for(int j = 0; j < this.getNb_liaisons(); j++)
 					if(this.getListe_liaisons().get(j).getC2().getNom().equals(li_nom))
-						bit = Integer.parseInt(this.getListe_liaisons().get(j).getC1().getBitSortie());
+						bit = Integer.parseInt(this.getListe_liaisons().get(j).getC1().getBit_sortie());
 				str = li.getC1().getValTdv(bit);
 			}
-			li.getC1().setBitSortie(str);
+			li.getC1().setBit_sortie(str);
 		}
 		return str;
 	}

@@ -25,7 +25,7 @@ public class FichierCircuit
 	{
 		String contenu = new String("");
 		try
-	    {
+		{
 			File fichier_circuit = new File(this.getUrl());
 		    FileReader lecteur = new FileReader(fichier_circuit);
 		    BufferedReader buffer = new BufferedReader(lecteur);

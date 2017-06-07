@@ -29,8 +29,8 @@ public class ChargerFichier
 	
 	public void charger_circuit()
 	{
-		String[][] tdv = {{""},{""}};
-		Circuit c = new Circuit(new ArrayList<Composant>(), new ArrayList<Liaison>(), tdv);
+		ArrayList<Composant> liste_c = new ArrayList<Composant>();
+		ArrayList<Liaison> liste_l = new ArrayList<Liaison>();
 		this.setListe_noms_composants(new ArrayList<String>());
 		try
 		{
@@ -46,7 +46,7 @@ public class ChargerFichier
 		            debut_chaine = ligne.substring(0,9);
 			        if(debut_chaine.equals("composant"))
 			        	if(compter_occurences(ligne, " ") == 2)
-		        			traitement_composant(ligne, c);
+		        			traitement_composant(ligne, liste_c);
 			        	else
 			        		System.out.println("[ERREUR] Le nombre d'espaces attendu est différent de 2 !\n Ligne : " + ligne + "\n [Nombre d'espaces : " + compter_occurences(ligne, " ") + "]");
 			        else
@@ -54,7 +54,7 @@ public class ChargerFichier
 			        	debut_chaine = ligne.substring(0,7);
 			        	if(debut_chaine.equals("liaison"))
 			        		if((compter_occurences(ligne, " ") == 4  && !ligne.contains("out")) || (compter_occurences(ligne, " ") == 3  && ligne.contains("out")))
-			        			traitement_liaison(ligne, c);
+			        			traitement_liaison(ligne, liste_l);
 			        		else
 			        			System.out.println("[ERREUR] Le nombre d'espaces attendu est différent de 2 !\n Ligne : " + ligne + "\n [Nombre d'espaces : " + compter_occurences(ligne, " ") + "]");
 			        	else
@@ -62,6 +62,12 @@ public class ChargerFichier
 			        }
 			        ligne = buffer.readLine();
 		        }
+		    	System.out.println("\n               :::::::::: LOG MAJ DES PREDECESSEURS ::::::::::\n");
+		        for(int i = 0; i < liste_l.size(); i++)
+		        {
+		        	maj_successeur(liste_l.get(i).getC1(), liste_c);
+					maj_predecesseurs(liste_l.get(i).getC2(), liste_c);
+		        }		       
 		        buffer.close();
 		        lecteur.close();
 		    }
@@ -69,12 +75,14 @@ public class ChargerFichier
 			{
 				System.out.print("[ERREUR] Le fichier n'a pas pu être ouvert... (" + e + ")");
 			}
+		    Circuit c = new Circuit(liste_c, liste_l);
+		    c.mise_a_jour();
+			this.setCircuit_charge(c);
 	    }
 		catch(FileNotFoundException e)
 		{
 			System.out.println("[ERREUR] Le fichier n'a pas été trouvé ! (" + e + ")");
 		}
-		this.setCircuit_charge(c);
 	}
 
 	public int compter_occurences(String chaine, String caractere)
@@ -86,7 +94,7 @@ public class ChargerFichier
 		return somme;
 	}
 	
-	public void traitement_composant(String ligne, Circuit c)
+	public void traitement_composant(String ligne, ArrayList<Composant> liste_c)
 	{ 	
 		String nom_composant = supprimer_espaces(ligne.substring(10, 14));	
 		String type_composant = supprimer_espaces(ligne.substring(ligne.length()-3)); 	
@@ -100,20 +108,23 @@ public class ChargerFichier
 			else
 				nom_tmp = nom_composant.substring(0, 3);
 			if(!nom_tmp.equals(type_composant.toLowerCase()))
-				System.out.println("[ERREUR] Il y a un problème entre le nom du composant (" + nom_composant +") et le type du composant (" + type_composant + ")");
+				System.out.println("[ERREUR] Il y a un problème entre le nom du composant (" + nom_composant + ") et le type du composant (" + type_composant + ")");
 			else
-			{
-				c.getListe_composants().add(new Composant(nom_composant, type_composant)); //le substr passe de 2 à 3 car on ajoute le chiffre dans le nom du composant
-				c.mise_a_jour();
-			}
+				liste_c.add(new Composant(nom_composant, type_composant)); //le substr passe de 2 à 3 car on ajoute le chiffre dans le nom du composant
 		}
 	}
 	
-	public void traitement_liaison(String ligne, Circuit c)
+	public void traitement_liaison(String ligne, ArrayList<Liaison> liste_l)
 	{ 
 		String log = new String("\n               :::::::::: LOG TRAITEMENT LIAISON ::::::::::\n\n");
-		String nom_composant_1 = supprimer_espaces(ligne.substring(8, 12));
-		String nom_composant_2 = supprimer_espaces(ligne.substring(14, 18));
+		//parse les lignes "liaison" pour récupérer les noms de composants
+		String nom_composant_1 = ligne.substring(ligne.indexOf(" ") + 1);
+		nom_composant_1 = nom_composant_1.substring(0, nom_composant_1.indexOf(" "));
+		String nom_composant_2 = ligne.substring(ligne.indexOf(" ") + 1); 
+		nom_composant_2 = nom_composant_2.substring(nom_composant_2.indexOf(" ") + 1); 
+		nom_composant_2 = nom_composant_2.substring(nom_composant_2.indexOf(" ") + 1); 
+		if(!nom_composant_2.contains("out"))
+			nom_composant_2 = nom_composant_2.substring(0, nom_composant_2.indexOf(" "));
 		Composant c1 = new Composant(nom_composant_1, "");
 		Composant c2 = new Composant(nom_composant_2, "");
 		String entree_c2 = new String(); //par defaut, première entrée (pour composant OUT)
@@ -158,15 +169,12 @@ public class ChargerFichier
 				c1.setType("IN");
 			else if(nom_composant_1.contains("or"))
 				c1.setType("OR");
-			else if(nom_composant_1.contains("and") || nom_composant_1.contains("xor") || !nom_composant_1.contains("not")) 
-			{
-				if(nom_composant_2.contains("and"))
-					c1.setType("AND");
-				else if(nom_composant_2.contains("xor"))
-					c1.setType("XOR");
-				else
-					c1.setType("NOT");
-			}
+			else if(nom_composant_1.contains("and"))
+				c1.setType("AND");
+			else if(nom_composant_1.contains("xor"))
+				c1.setType("XOR");
+			else if(nom_composant_1.contains("not"))
+				c1.setType("NOT");
 			else //si le deuxième composant est une sortie OUT
 			{
 				sortie_c1 = null;
@@ -186,15 +194,12 @@ public class ChargerFichier
 			}
 			else if(nom_composant_2.contains("or"))
 				c2.setType("OR");
-			else if(nom_composant_2.contains("and") || nom_composant_2.contains("xor") || !nom_composant_2.contains("not")) //si le deuxième composant est une porte AND, XOR ou NOT
-			{
-				if(nom_composant_2.contains("and"))
-					c2.setType("AND");
-				else if(nom_composant_2.contains("xor"))
-					c2.setType("XOR");
-				else
-					c2.setType("NOT");
-			}
+			else if(nom_composant_2.contains("and"))
+				c2.setType("AND");
+			else if(nom_composant_2.contains("xor"))
+				c2.setType("XOR");
+			else if(nom_composant_2.contains("not"))
+				c2.setType("NOT");
 			else //si le deuxième composant est une sortie OUT
 			{
 				entree_c2 = null;
@@ -203,12 +208,38 @@ public class ChargerFichier
 			//si en outre, les entrees et sorties ont été vérifiées, on crée la nouvelle liaison et on l'ajoute à la liste des liaisons du circuit
 			if(verifie)
 			{	
+				c1.setC_successeur(c2);
+				c2.getListe_c_predecesseurs().add(c1);
 				Liaison li = new Liaison(c1, c2, sortie_c1, entree_c2);
-				c.getListe_liaisons().add(li);
-				c.mise_a_jour();
+				liste_l.add(li);
 			}
 		}
 		afficher_log(log);
+	}
+	
+	public void maj_successeur(Composant c, ArrayList<Composant> liste_c)
+	{
+		for(int i = 0; i < liste_c.size(); i++)
+			if(liste_c.get(i).getNom().equals(c.getNom()))
+				for(int a = 0; a < liste_c.size(); a++)
+					if(liste_c.get(a).getNom().equals(c.getC_successeur().getNom()))
+					{
+						System.out.println("               Pour le composant : " + liste_c.get(i).getNom() + ", le successeur lu et ajouté est : " + liste_c.get(a).getNom());
+						liste_c.get(i).setC_successeur(liste_c.get(a));
+					}
+	}
+	
+	public void maj_predecesseurs(Composant c, ArrayList<Composant> liste_c)
+	{
+		for(int i = 0; i < liste_c.size(); i++)
+			if(liste_c.get(i).getNom().equals(c.getNom()))
+				for(int a = 0; a < c.getListe_c_predecesseurs().size(); a++)
+					for(int b = 0; b < liste_c.size(); b++)
+						if(liste_c.get(b).getNom().equals(c.getListe_c_predecesseurs().get(a).getNom()))
+						{
+							System.out.println("               Pour le composant : " + liste_c.get(i).getNom() + ", le prédecesseur lu et ajouté est : " + liste_c.get(b).getNom());
+							liste_c.get(i).getListe_c_predecesseurs().add(liste_c.get(b));
+						}
 	}
 	
 	public String supprimer_espaces(String nom_c)
@@ -259,10 +290,11 @@ public class ChargerFichier
 		
 	public void afficher_resultats()
 	{
-		this.getCircuit_charge().afficherInformations();
+		this.getCircuit_charge().afficher_informations();
 		System.out.println("\n               :::::::::: LISTE DES NOMS DE COMPOSANTS ENREGISTRES ::::::::::\n");
 		for(int a = 0; a < this.getListe_noms_composants().size(); a++)
 			System.out.println("               - " + this.getListe_noms_composants().get(a));
+		this.getCircuit_charge().afficher_tdv();
 	}
 	
 	//-------------------------------------------------- accesseurs et mutateurs --------------------------------------------------//

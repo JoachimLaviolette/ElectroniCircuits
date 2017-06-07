@@ -7,9 +7,11 @@ public class Composant
 	private String type; //AND, OR, XOR, NOT, IN, OUT
 	private float resistance;
 	private ArrayList<String> liste_bits_entree;
+	private String bit_sortie;
 	private int nb_entrees;
 	private int nb_sorties;
-	private String bit_sortie;
+	private ArrayList<Composant> liste_c_predecesseurs;
+	private Composant c_successeur;
 	private String tdv[][]; //table de verite d'un composant
 	private String chaine;
 	
@@ -17,25 +19,26 @@ public class Composant
 	{
 		this.setNom(nom_c);
 		this.setType(type_c);
-		initialiser_nb_entrees_sorties();
-		initialiser_tdv();
+		this.setListe_bits_entree(new ArrayList<String>());
+		this.initialiser_nb_entrees_sorties();	
+		this.setListe_c_predecesseurs(new ArrayList<Composant>());
+		this.initialiser_tdv();
 	}	
 	
 	public void initialiser_nb_entrees_sorties()
 	{
-		//entrees
+		//entrees (0 pour in)
 		if(this.getType().equals("IN"))
 			this.setNb_entrees(0);
 		else if(this.getType().equals("NOT") || this.getType().equals("OUT"))
 			this.setNb_entrees(1);
 		else
 			this.setNb_entrees(2);
-		//sorties (0 pour out
+		//sorties (0 pour out)
 		if(this.getType().equals("OUT"))
 			this.setNb_sorties(0);
 		else
 			this.setNb_sorties(1);
-		
 	}
 	
 	public void initialiser_tdv()
@@ -87,27 +90,22 @@ public class Composant
 	
 	public String getValTdv(int x)
 	{
-		return (this.getTdv()[x][1]);
+		return (this.getTdv()[1][x]);
 	}
 	
 	public String getValTdv(int x, int y)
 	{
-		return (this.getTdv()[x][y]);
+		return (this.getTdv()[y][x]);
 	}
 	
 	public void setValTdv(int x, int y, String val)
 	{
-		this.getTdv()[x][y] = val;
+		this.getTdv()[y][x] = val;
 	}
 	
 	public String getBitEntree(int i) //premier bit : 0, deuxième bit : 1
 	{
-		return this.getListeBits_entree().get(i);
-	}
-	
-	public void setBitEntree(int i, String val)
-	{
-		this.getListeBits_entree().set(i, val);
+		return this.getListe_bits_entree().get(i);
 	}
 	
 	public void generer_chaine()
@@ -148,14 +146,24 @@ public class Composant
 		this.resistance = resistance;
 	}
 	
-	public ArrayList<String> getListeBits_entree() 
+	public ArrayList<String> getListe_bits_entree() 
 	{
 		return this.liste_bits_entree;
 	}
 
-	public void setListeBits_entree(ArrayList<String> bits_entree)
+	public void setListe_bits_entree(ArrayList<String> liste_bits_entree) 
 	{
-		this.liste_bits_entree = bits_entree;
+		this.liste_bits_entree = liste_bits_entree;
+	}
+
+	public String getBit_sortie() 
+	{
+		return this.bit_sortie;
+	}
+
+	public void setBit_sortie(String bit_sortie) 
+	{
+		this.bit_sortie = bit_sortie;
 	}
 
 	public int getNb_entrees()
@@ -177,15 +185,25 @@ public class Composant
 	{
 		this.nb_sorties = nb_sorties;
 	}
-
-	public String getBit_sortie() 
+	
+	public ArrayList<Composant> getListe_c_predecesseurs() 
 	{
-		return this.bit_sortie;
+		return this.liste_c_predecesseurs;
 	}
 
-	public void setBit_sortie(String bit_sortie) 
+	public void setListe_c_predecesseurs(ArrayList<Composant> liste_c_predecesseurs) 
 	{
-		this.bit_sortie = bit_sortie;
+		this.liste_c_predecesseurs = liste_c_predecesseurs;
+	}
+
+	public Composant getC_successeur()
+	{
+		return this.c_successeur;
+	}
+
+	public void setC_successeur(Composant c_successeur)
+	{
+		this.c_successeur = c_successeur;
 	}
 
 	public String[][] getTdv() 

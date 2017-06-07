@@ -17,7 +17,9 @@ public class Liaison
 	
 	public void generer_chaine()
 	{
-		String str = this.getC1().getType() + " - " + this.getC1().getNom() + " - " + this.getSortie_c1() + " --> " + this.getC2().getType() + " - " + this.getC2().getNom() + " - " + this.getEntree_c2();
+		String str = this.getC1().getType() + " - " + this.getC1().getNom() + " - " + this.getSortie_c1() + " --> " + this.getC2().getType() + " - " + this.getC2().getNom();
+		if(!this.getC2().getType().equals("OUT"))
+				str += " - " + this.getEntree_c2();
 		this.setChaine(str);
 	}
 	

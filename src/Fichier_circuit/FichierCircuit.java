@@ -63,7 +63,6 @@ public class FichierCircuit
 	{
 		try
 	    {
-			File fichier_circuit = new File(this.getUrl());
 			FileWriter ecriveur = new FileWriter(url_fichier_circuit + "/" + nom_fichier_circuit + ".txt");
 			BufferedWriter buffer = new BufferedWriter(ecriveur);
 			try

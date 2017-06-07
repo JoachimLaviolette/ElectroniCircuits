@@ -60,8 +60,6 @@ public class Circuit
 	public void generer_tdv()
 	{
 		int nb_entrees = calculer_nb_entrees();
-		String[] entrees = new String[nb_entrees];
-		this.remplir_noms_entrees(entrees);
 		for(int i = 0; i < (int)Math.pow(2, nb_entrees); i++) //génère des nombres en binaire allant de 0 à 2^k entrées
 		{
 			//on vide les bits d'entrées et de sortie de chaque porte avant chaque nouveau calcul [IMPORTANT!]
@@ -76,7 +74,7 @@ public class Circuit
 			this.setValTdv(0, i+1, binaire); //0 0 0
 			String valeur_de_verite_sortie = calculer_tdv_sortie(binaire);
 			if(valeur_de_verite_sortie.equals("[ERREUR]"))
-					System.out.println("Une erreur s'est produite durant le calcul de la table de vérité du circuit pour l'entrée : " + binaire);
+					System.out.println("Une erreur s'est produite durant le calcul de la valeur de vérité du circuit pour l'entrée : " + binaire);
 			else
 				this.setValTdv(1, i+1, valeur_de_verite_sortie); //1
 		}
@@ -119,7 +117,7 @@ public class Circuit
 				if(this.getListe_composants().get(i).getType().equals("AND") || this.getListe_composants().get(i).getType().equals("OR") || this.getListe_composants().get(i).getType().equals("XOR"))
 				{
 					if(this.getListe_composants().get(i).getListe_bits_entree().size() > this.getListe_composants().get(i).getNb_entrees())
-						System.out.println("[ERREUR] Composant [AND/OR/XOR] à deux entrées. Nombre d'entrées différent de 2 !" + " " + this.getListe_composants().get(i).getListe_bits_entree().size());
+						System.out.println("[ERREUR] Composant [AND/OR/XOR] à deux entrées. Nombre d'entrées différent de 2 !");
 					else
 					{
 						int bit_entree_1 = Integer.parseInt(this.getListe_composants().get(i).getBitEntree(0));
@@ -293,7 +291,10 @@ public class Circuit
 					str += " et pour ";
 			}
 			if(!this.getListe_composants().get(i).getType().equals("OUT"))
-				str += "successeur : " + this.getListe_composants().get(i).getC_successeur().getNom();
+			{
+				System.out.println("succ " + this.getListe_composants().get(i).getNom());
+				str += "successeur : " + this.getListe_composants().get(i).getC_successeur().getNom(); 
+			}
 			str += "\n";
 		}
 		str += "\n";

@@ -23,7 +23,7 @@ public class ChargerFichier
 		this.setScanner(new Scanner(System.in));
 		System.out.println("Saisissez votre url de fichier circuit : ");
 		this.setUrl_fichier_circuit(this.getScanner().nextLine()); 
-		this.setFichier_circuit(new FichierCircuit(null, this.getUrl_fichier_circuit(),null));
+		this.setFichier_circuit(new FichierCircuit(null, this.getUrl_fichier_circuit(), null));
 		this.getFichier_circuit().lire();
 	}
 	
@@ -96,8 +96,8 @@ public class ChargerFichier
 	
 	public void traitement_composant(String ligne, ArrayList<Composant> liste_c)
 	{ 	
-		String nom_composant = supprimer_espaces(ligne.substring(10, 14));	
-		String type_composant = supprimer_espaces(ligne.substring(ligne.length()-3)); 	
+		String nom_composant = ligne.substring(ligne.indexOf(" ") + 1, ligne.lastIndexOf(" "));
+		String type_composant = ligne.substring(ligne.lastIndexOf(" ") + 1);
 		if(!type_composant.equals("IN") && !type_composant.equals("OR") && !type_composant.equals("AND") && !type_composant.equals("XOR") && !type_composant.equals("NOT") && !type_composant.equals("OUT"))
 			System.out.println("[ERREUR] Le fichier contient un composant non-accepté ! [Composant : " + type_composant + "]");
 		else
@@ -130,7 +130,9 @@ public class ChargerFichier
 		String entree_c2 = new String(); //par defaut, première entrée (pour composant OUT)
 		String sortie_c1 = new String();
 		entree_c2 = supprimer_espaces(ligne.substring(ligne.length()-1));
-		sortie_c1 = supprimer_espaces(ligne.substring((ligne.substring(0, 13).lastIndexOf(" ")), (ligne.substring(0, 13).lastIndexOf(" ")) + 2));
+		sortie_c1 = ligne.substring(ligne.indexOf(" ") + 1);
+		sortie_c1 = sortie_c1.substring(sortie_c1.indexOf(" ") + 1);
+		sortie_c1 = sortie_c1.substring(0, sortie_c1.indexOf(" "));
 		boolean verifie = false;
 		boolean controle_effectue = false;
 		
@@ -147,7 +149,7 @@ public class ChargerFichier
 			log += "               [Ctrl pas encore effectué]";
 			verifie = controle_entree(nom_composant_2, entree_c2) && controle_sortie(nom_composant_1, sortie_c1);
 			if(verifie)
-				log += "\n               controle_sortie : true \n               controle_sortie : true";
+				log += "\n               controle_entree : true \n               controle_sortie : true";
 		}
 		else
 			log += "               [Ctrl déjà effectué] : OUT en premier composant ou IN en deuxième composant.";
@@ -175,8 +177,9 @@ public class ChargerFichier
 				c1.setType("XOR");
 			else if(nom_composant_1.contains("not"))
 				c1.setType("NOT");
-			else //si le deuxième composant est une sortie OUT
+			else //si le premier composant est une sortie OUT
 			{
+				verifie = false;
 				sortie_c1 = null;
 				c1.setType("OUT");
 			}
@@ -189,6 +192,7 @@ public class ChargerFichier
 		{
 			if(nom_composant_2.contains("in"))
 			{
+				verifie = false;
 				entree_c2 = null;
 				c2.setType("IN");
 			}
@@ -205,14 +209,14 @@ public class ChargerFichier
 				entree_c2 = null;
 				c2.setType("OUT");
 			}
-			//si en outre, les entrees et sorties ont été vérifiées, on crée la nouvelle liaison et on l'ajoute à la liste des liaisons du circuit
-			if(verifie)
-			{	
-				c1.setC_successeur(c2);
-				c2.getListe_c_predecesseurs().add(c1);
-				Liaison li = new Liaison(c1, c2, sortie_c1, entree_c2);
-				liste_l.add(li);
-			}
+		}
+		//si en outre, les entrees et sorties ont été vérifiées, on crée la nouvelle liaison et on l'ajoute à la liste des liaisons du circuit
+		if(verifie)
+		{	
+			c1.setC_successeur(c2);
+			c2.getListe_c_predecesseurs().add(c1);
+			Liaison li = new Liaison(c1, c2, sortie_c1, entree_c2);
+			liste_l.add(li);
 		}
 		afficher_log(log);
 	}

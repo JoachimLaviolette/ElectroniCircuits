@@ -179,7 +179,6 @@ public class ChargerFichier
 				c1.setType("NOT");
 			else //si le premier composant est une sortie OUT
 			{
-				verifie = false;
 				sortie_c1 = null;
 				c1.setType("OUT");
 			}
@@ -192,7 +191,6 @@ public class ChargerFichier
 		{
 			if(nom_composant_2.contains("in"))
 			{
-				verifie = false;
 				entree_c2 = null;
 				c2.setType("IN");
 			}
@@ -210,6 +208,7 @@ public class ChargerFichier
 				c2.setType("OUT");
 			}
 		}
+		
 		//si en outre, les entrees et sorties ont été vérifiées, on crée la nouvelle liaison et on l'ajoute à la liste des liaisons du circuit
 		if(verifie)
 		{	

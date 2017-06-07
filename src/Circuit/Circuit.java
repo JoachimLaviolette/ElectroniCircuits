@@ -9,6 +9,7 @@ public class Circuit
 	private ArrayList<Composant> liste_composants;
 	private ArrayList<Liaison> liste_liaisons;
 	private String[][] tdv; //table de verite d'un circuit
+	private String my_tdv;
 		
 	public Circuit(ArrayList<Composant> liste_composants, ArrayList<Liaison> liste_liaisons)
 	{
@@ -79,8 +80,8 @@ public class Circuit
 				this.setValTdv(1, i+1, valeur_de_verite_sortie); //1
 		}
 	}
-	
-	public void afficher_tdv()
+		
+	public String produire_tdv()
 	{
 		this.generer_tdv();
 		String tdv = new String("\n               :::::::::: TABLE DE VERITE DU CIRCUIT ::::::::::\n\n"); 
@@ -98,7 +99,13 @@ public class Circuit
 				tdv += this.getValTdv(0, i+1).charAt(a) + "      ";	//ajoute chaque caractère de la chaine binaire avec un espace entre eux
 			tdv += "|        " + this.getValTdv(1, i+1) + "\n"; //affiche la valeur de vérité au nombre binaire (chaine) 
 		}
-		System.out.println(tdv);
+		return tdv;
+	}
+	
+	public void afficher_tdv()
+	{
+		this.setMy_tdv(produire_tdv());
+		System.out.println(this.getMy_tdv());
 	}
 	
 	public String calculer_tdv_sortie(String binaire)
@@ -110,140 +117,68 @@ public class Circuit
 					this.getListe_composants().get(x).setBit_sortie(binaire.charAt(m) + ""); //on affecte à la porte IN regardé son bit de sortie
 					this.getListe_composants().get(x).getC_successeur().getListe_bits_entree().add(binaire.charAt(m) + ""); //on ajoute à la liste de bits d'entrée du successeur la sortie de l'entrée 
 				}
+		while(!this.verifier_nb_bits_entree_composants())
+		{
+			for(int i = 0; i < this.getNb_composants(); i++)
+			{
+				if(!this.getListe_composants().get(i).getType().equals("IN") && !this.getListe_composants().get(i).getType().equals("OUT"))
+				{
+					if(this.getListe_composants().get(i).getType().equals("AND") || this.getListe_composants().get(i).getType().equals("OR") || this.getListe_composants().get(i).getType().equals("XOR"))
+					{
+						if(this.getListe_composants().get(i).getListe_bits_entree().size() > this.getListe_composants().get(i).getNb_entrees())
+							System.out.println("[ERREUR] Composant [AND/OR/XOR] à deux entrées. Nombre d'entrées supérieur à 2 !" + this.getListe_composants().get(i).getListe_bits_entree().size());
+						else
+						{
+							if(this.getListe_composants().get(i).getListe_bits_entree().size() == this.getListe_composants().get(i).getNb_entrees() && this.getListe_composants().get(i).getBit_sortie().equals(""))
+							{
+								int bit_entree_1 = Integer.parseInt(this.getListe_composants().get(i).getBitEntree(0));
+								int bit_entree_2 = Integer.parseInt(this.getListe_composants().get(i).getBitEntree(1));
+								String valeur_de_verite = this.getListe_composants().get(i).getValTdv(bit_entree_1 + 1, bit_entree_2 + 1);
+								this.getListe_composants().get(i).setBit_sortie(valeur_de_verite);
+								String bit_sortie = this.getListe_composants().get(i).getBit_sortie();
+								this.getListe_composants().get(i).getC_successeur().getListe_bits_entree().add(bit_sortie);
+							}
+						}					
+					}
+					else
+					{
+						if(this.getListe_composants().get(i).getListe_bits_entree().size() > this.getListe_composants().get(i).getNb_entrees())
+							System.out.println("[ERREUR] Composant [NOT] à une entrée. Nombre d'entrées supérieur à 1 !");
+						else
+						{
+							if(this.getListe_composants().get(i).getListe_bits_entree().size() == this.getListe_composants().get(i).getNb_entrees() && this.getListe_composants().get(i).getBit_sortie().equals(""))
+							{
+								int bit_entree_1 = Integer.parseInt(this.getListe_composants().get(i).getBitEntree(0));
+								String valeur_de_verite = this.getListe_composants().get(i).getValTdv(bit_entree_1 + 1, 1);
+								this.getListe_composants().get(i).setBit_sortie(valeur_de_verite);
+								String bit_sortie = this.getListe_composants().get(i).getBit_sortie();
+								this.getListe_composants().get(i).getC_successeur().getListe_bits_entree().add(bit_sortie);
+							}
+						}
+					}
+				}
+			}
+		}
 		for(int i = 0; i < this.getNb_composants(); i++)
 		{
-			if(!this.getListe_composants().get(i).getType().equals("IN") && !this.getListe_composants().get(i).getType().equals("OUT"))
+			if(this.getListe_composants().get(i).getType().equals("OUT"))
 			{
-				if(this.getListe_composants().get(i).getType().equals("AND") || this.getListe_composants().get(i).getType().equals("OR") || this.getListe_composants().get(i).getType().equals("XOR"))
-				{
-					if(this.getListe_composants().get(i).getListe_bits_entree().size() > this.getListe_composants().get(i).getNb_entrees())
-						System.out.println("[ERREUR] Composant [AND/OR/XOR] à deux entrées. Nombre d'entrées différent de 2 !");
-					else
-					{
-						int bit_entree_1 = Integer.parseInt(this.getListe_composants().get(i).getBitEntree(0));
-						int bit_entree_2 = Integer.parseInt(this.getListe_composants().get(i).getBitEntree(1));
-						String valeur_de_verite = this.getListe_composants().get(i).getValTdv(bit_entree_1 + 1, bit_entree_2 + 1);
-						this.getListe_composants().get(i).setBit_sortie(valeur_de_verite);
-						String bit_sortie = this.getListe_composants().get(i).getBit_sortie();
-						this.getListe_composants().get(i).getC_successeur().getListe_bits_entree().add(bit_sortie);
-					}					
-				}
-				else if(this.getListe_composants().get(i).getType().equals("NOT"))
-				{
-					if(this.getListe_composants().get(i).getListe_bits_entree().size() > this.getListe_composants().get(i).getNb_entrees())
-						System.out.println("[ERREUR] Composant [NOT] à une entrée. Nombre d'entrées différent de 1 !");
-					else
-					{
-						int bit_entree_1 = Integer.parseInt(this.getListe_composants().get(i).getBitEntree(0));
-						String valeur_de_verite = this.getListe_composants().get(i).getValTdv(bit_entree_1 + 1, 1);
-						this.getListe_composants().get(i).setBit_sortie(valeur_de_verite);
-						String bit_sortie = this.getListe_composants().get(i).getBit_sortie();
-						this.getListe_composants().get(i).getC_successeur().getListe_bits_entree().add(bit_sortie);
-					}
-				}
-				if(this.getListe_composants().get(i).getC_successeur().getType().equals("OUT"))
-				{
-					if(this.getListe_composants().get(i).getC_successeur().getListe_bits_entree().size() > this.getListe_composants().get(i).getC_successeur().getNb_entrees())
-						System.out.println("[ERREUR] Composant [OUT] à une entrée. Nombre d'entrées différent de 1 !");
-					else
-						return this.getListe_composants().get(i).getC_successeur().getBitEntree(0);				
-				}
+				if(this.getListe_composants().get(i).getListe_bits_entree().size() > this.getListe_composants().get(i).getNb_entrees())
+					System.out.println("[ERREUR] Composant [OUT] à une entrée. Nombre d'entrées différent de 1 !");
+				else
+					return this.getListe_composants().get(i).getBitEntree(0);	
 			}
-		}		
+		}
 		return "[ERREUR]";
-		/*
-			for(int i = 0; i < this.getNb_liaisons(); i++)
-			{
-				Liaison li = this.getListe_liaisons().get(i);
-				String c1_nom = li.getC1().getNom();
-				if(li.getC1().getType().equals("AND") || li.getC1().getType().equals("OR") || li.getC1().getType().equals("XOR")) //2 entrées
-				{
-					String c_pred_bit0_s = "";
-					String c_pred_nom0 = "";
-					String c_pred_bit1_s = "";
-					String c_pred_nom1 = "";
-					int bit_0 = 0; //bit entrée 1
-					int bit_1 = 0; //bit entrée 2
-					int a = 0;
-					for(int j = 0; j < this.getNb_liaisons(); j++)
-					{
-						if(this.getListe_liaisons().get(j).getC2().getNom().equals(c1_nom) && a == 0)
-						{
-							c_pred_nom0 = this.getListe_liaisons().get(j).getC1().getNom();
-							for(int x = 0; x < this.getNb_composants(); x++)
-								if(this.getListe_composants().get(x).getNom().equals(c_pred_nom0))
-									c_pred_bit0_s = this.getListe_composants().get(x).getBit_sortie();
-							bit_0 = Integer.parseInt(c_pred_bit0_s);
-							a++;
-						}					
-						else if(this.getListe_liaisons().get(j).getC2().getNom().equals(c1_nom) && a == 1)
-						{
-							c_pred_nom1 = this.getListe_liaisons().get(j).getC1().getNom();
-							for(int x = 0; x < this.getNb_composants(); x++)
-								if(this.getListe_composants().get(x).getNom().equals(c_pred_nom1))
-									c_pred_bit1_s = this.getListe_composants().get(x).getBit_sortie();
-							bit_1 = Integer.parseInt(c_pred_bit1_s);
-							a++;
-						}
-					}				
-					for(int x = 0; x < this.getNb_composants(); x++)
-					{
-						if(this.getListe_composants().get(x).getNom().equals(c1_nom))
-						{
-							if(this.getListe_composants().get(x).getListe_bits_entree().get(0).equals(""))
-								this.getListe_composants().get(x).setBit_entree(0, bit_0 + ""); //on affecte au composant regardé son bit d'entrée (0)
-							else if(this.getListe_composants().get(x).getListe_bits_entree().get(1).equals(""))
-								this.getListe_composants().get(x).setBit_entree(1, bit_1 + ""); //on affecte au composant regardé son bit d'entrée (1)
-							else
-								System.out.println("\n1) [ERREUR] Ce composant (" + c1_nom + ") possède tous ses ports d'entrée occupés.");
-							if(!this.getListe_composants().get(x).getListe_bits_entree().get(0).equals("") && !this.getListe_composants().get(x).getListe_bits_entree().get(1).equals(""))
-								this.getListe_composants().get(x).setBit_sortie(this.getListe_composants().get(x).getValTdv(bit_0, bit_1));
-						}	
-					}
-				}
-				else //NOT et OUT
-				{
-					if(!li.getC1().getType().equals("IN")) 
-					{
-						String c_pred_bit_s = ""; //bit entrée
-						String c_pred_nom = "";
-						int bit = 0; //bit entrée
-						int a = 0;
-						for(int j = 0; j < this.getNb_liaisons(); j++)
-						{
-							if(this.getListe_liaisons().get(j).getC2().getNom().equals(c1_nom) && a == 0)
-							{
-								c_pred_nom = this.getListe_liaisons().get(j).getC1().getNom();
-								for(int x = 0; x < this.getNb_composants(); x++)
-									if(this.getListe_composants().get(x).getNom().equals(c_pred_nom))
-										c_pred_bit_s = this.getListe_composants().get(x).getBit_sortie();
-								bit = Integer.parseInt(c_pred_bit_s);
-								a++;
-							}
-						}				
-						for(int x = 0; x < this.getNb_composants(); x++)
-						{
-							if(this.getListe_composants().get(x).getNom().equals(c1_nom))
-							{
-								if(this.getListe_composants().get(x).getListe_bits_entree().get(0).equals(""))
-									this.getListe_composants().get(x).setBit_entree(0, bit + ""); //on affecte au composant regardé son bit d'entrée						
-								else
-									System.out.println("2) [ERREUR] Ce composant (" + c1_nom + ") possède tous ses ports d'entrée occupés.");
-								if(!li.getC1().getType().equals("OUT")) 
-									if(!this.getListe_composants().get(x).getListe_bits_entree().get(0).equals(""))
-										this.getListe_composants().get(x).setBit_sortie(this.getListe_composants().get(x).getValTdv(bit));
-							}	
-						}	
-					}
-				}
-				if(li.getC2().getType().equals("OUT"))
-					li.getC2().setBit_entree(0, li.getC1().getBit_sortie());
-			}
-			for(int x = 0; x < this.getNb_composants(); x++)
-				if(this.getListe_composants().get(x).getType().equals("OUT"))
-					return this.getListe_composants().get(x).getListe_bits_entree().get(0);
-			return null;
-		*/
+	}
+	
+	public boolean verifier_nb_bits_entree_composants()
+	{
+		for(int i = 0; i < this.getNb_composants(); i++)
+			if(!this.getListe_composants().get(i).getType().equals("IN"))
+				if(this.getListe_composants().get(i).getListe_bits_entree().size() < this.getListe_composants().get(i).getNb_entrees())
+					return false;
+		return true;
 	}
 	
 	public String getValTdv(int x, int y)
@@ -291,10 +226,7 @@ public class Circuit
 					str += " et pour ";
 			}
 			if(!this.getListe_composants().get(i).getType().equals("OUT"))
-			{
-				System.out.println("succ " + this.getListe_composants().get(i).getNom());
 				str += "successeur : " + this.getListe_composants().get(i).getC_successeur().getNom(); 
-			}
 			str += "\n";
 		}
 		str += "\n";
@@ -361,5 +293,15 @@ public class Circuit
 	public void setTdv(String[][] tdv) 
 	{
 		this.tdv = tdv;
+	}
+	
+	public String getMy_tdv() 
+	{
+		return this.my_tdv;
+	}
+
+	public void setMy_tdv(String my_tdv) 
+	{
+		this.my_tdv = my_tdv;
 	}
 }

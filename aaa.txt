@@ -1,11 +1,7 @@
 composant in1 IN
 composant in2 IN
-composant in3 IN
 composant out1 OUT
-composant nand1 NAND
-composant nor1 NOR
-liaison nand1 1 nor1 1
-liaison in3 1 nor1 2
-liaison nor1 1 out1
-liaison in1 1 nand1 1
-liaison in2 1 nand1 2
+composant mux1 MUX 0
+liaison mux1 1 out1
+liaison in2 1 mux1 2
+liaison in1 1 mux1 1

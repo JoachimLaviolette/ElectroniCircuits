@@ -56,29 +56,35 @@ public class ChargerFichier
 		        {
 		            debut_chaine = ligne.substring(0,9);
 			        if(debut_chaine.equals("composant"))
-			        	if(compter_occurences(ligne, " ") == 2)
-		        			traitement_composant(ligne, liste_c);
+			        {
+			        	if(!ligne.contains("MUX") || !ligne.contains("mux"))
+			        	{	
+			        		if(compter_occurences(ligne, " ") == 2)
+			        			traitement_composant(ligne, liste_c);
+				        	else
+				        		System.out.println("[ERREUR] Le nombre d'espaces attendu est différent de 2 !\n Ligne : " + ligne + "\n [Nombre d'espaces : " + compter_occurences(ligne, " ") + "]");
+			        	}
 			        	else
-			        		System.out.println("[ERREUR] Le nombre d'espaces attendu est différent de 2 !\n Ligne : " + ligne + "\n [Nombre d'espaces : " + compter_occurences(ligne, " ") + "]");
+			        	{
+			        		if(compter_occurences(ligne, " ") == 3)
+			        			traitement_composant(ligne, liste_c);
+				        	else
+				        		System.out.println("[ERREUR] Le nombre d'espaces attendu est différent de 3 !\n Ligne : " + ligne + "\n [Nombre d'espaces : " + compter_occurences(ligne, " ") + "]");
+			        	}
+			        }
 			        else
 			        {
 			        	debut_chaine = ligne.substring(0,7);
 			        	if(debut_chaine.equals("liaison"))
 			        		if((compter_occurences(ligne, " ") == 4  && !ligne.contains("out")) || (compter_occurences(ligne, " ") == 3  && ligne.contains("out")))
-			        			traitement_liaison(ligne, liste_l);
+			        			traitement_liaison(ligne, liste_l, liste_c);
 			        		else
 			        			System.out.println("[ERREUR] Le nombre d'espaces attendu est différent de 2 !\n Ligne : " + ligne + "\n [Nombre d'espaces : " + compter_occurences(ligne, " ") + "]");
 			        	else
 			        		System.out.println("[ERREUR] Le fichier contient une ligne dépréciée ! [Debut de chaine : " + debut_chaine + "]");
 			        }
 			        ligne = buffer.readLine();
-		        }
-		    	System.out.println("\n               :::::::::: LOG MAJ DES PREDECESSEURS ::::::::::\n");
-		        for(int i = 0; i < liste_l.size(); i++)
-		        {
-		        	maj_successeur(liste_l.get(i).getC1(), liste_c);
-					maj_predecesseurs(liste_l.get(i).getC2(), liste_c);
-		        }		       
+		        }	       
 		        buffer.close();
 		        lecteur.close();
 		    }
@@ -114,16 +120,28 @@ public class ChargerFichier
 		        {
 		            debut_chaine = ligne.substring(0,9);
 			        if(debut_chaine.equals("composant"))
-			        	if(compter_occurences(ligne, " ") == 2)
-		        			traitement_composant(ligne, liste_c);
+			        {
+			        	if(!ligne.contains("MUX") || !ligne.contains("mux"))
+			        	{	
+			        		if(compter_occurences(ligne, " ") == 2)
+			        			traitement_composant(ligne, liste_c);
+				        	else
+				        		System.out.println("[ERREUR] Le nombre d'espaces attendu est différent de 2 !\n Ligne : " + ligne + "\n [Nombre d'espaces : " + compter_occurences(ligne, " ") + "]");
+			        	}
 			        	else
-			        		System.out.println("[ERREUR] Le nombre d'espaces attendu est différent de 2 !\n Ligne : " + ligne + "\n [Nombre d'espaces : " + compter_occurences(ligne, " ") + "]");
+			        	{
+			        		if(compter_occurences(ligne, " ") == 3)
+			        			traitement_composant(ligne, liste_c);
+				        	else
+				        		System.out.println("[ERREUR] Le nombre d'espaces attendu est différent de 3 !\n Ligne : " + ligne + "\n [Nombre d'espaces : " + compter_occurences(ligne, " ") + "]");
+			        	}
+			        }
 			        else
 			        {
 			        	debut_chaine = ligne.substring(0,7);
 			        	if(debut_chaine.equals("liaison"))
 			        		if((compter_occurences(ligne, " ") == 4  && !ligne.contains("out")) || (compter_occurences(ligne, " ") == 3  && ligne.contains("out")))
-			        			traitement_liaison(ligne, liste_l);
+			        			traitement_liaison(ligne, liste_l, liste_c);
 			        		else
 			        			System.out.println("[ERREUR] Le nombre d'espaces attendu est différent de 2 !\n Ligne : " + ligne + "\n [Nombre d'espaces : " + compter_occurences(ligne, " ") + "]");
 			        	else
@@ -131,12 +149,6 @@ public class ChargerFichier
 			        }
 			        ligne = buffer.readLine();
 		        }
-		    	System.out.println("\n               :::::::::: LOG MAJ DES PREDECESSEURS ::::::::::\n");
-		        for(int i = 0; i < liste_l.size(); i++)
-		        {
-		        	maj_successeur(liste_l.get(i).getC1(), liste_c);
-					maj_predecesseurs(liste_l.get(i).getC2(), liste_c);
-		        }		       
 		        buffer.close();
 		        lecteur.close();
 		    }
@@ -165,9 +177,25 @@ public class ChargerFichier
 	
 	public void traitement_composant(String ligne, ArrayList<Composant> liste_c)
 	{ 	
-		String nom_composant = ligne.substring(ligne.indexOf(" ") + 1, ligne.lastIndexOf(" "));
-		String type_composant = ligne.substring(ligne.lastIndexOf(" ") + 1);
-		if(!type_composant.equals("IN") && !type_composant.equals("OR") && !type_composant.equals("NOR") && !type_composant.equals("AND") && !type_composant.equals("NAND") && !type_composant.equals("XOR") && !type_composant.equals("XNOR") && !type_composant.equals("NOT") && !type_composant.equals("OUT"))
+		String nom_composant;
+		String type_composant;
+		String commande = null;
+		if(!ligne.contains("MUX"))
+		{
+			nom_composant = ligne.substring(ligne.indexOf(" ") + 1, ligne.lastIndexOf(" "));
+			type_composant = ligne.substring(ligne.lastIndexOf(" ") + 1);
+		}
+		else
+		{
+			nom_composant = ligne.substring(ligne.indexOf(" ") + 1);
+			nom_composant = nom_composant.substring(0, nom_composant.indexOf(" "));
+			type_composant = ligne.substring(ligne.indexOf(" ") + 1);
+			type_composant = type_composant.substring(type_composant.indexOf(" ") + 1);
+			type_composant = type_composant.substring(0, type_composant.indexOf(" "));	
+			commande = ligne.substring(ligne.lastIndexOf(" ") + 1);
+			System.out.println("commande " + commande);
+		}
+		if(!type_composant.equals("IN") && !type_composant.equals("OR") && !type_composant.equals("NOR") && !type_composant.equals("AND") && !type_composant.equals("NAND") && !type_composant.equals("XOR") && !type_composant.equals("XNOR") && !type_composant.equals("NOT") && !type_composant.equals("OUT") && !type_composant.equals("MUX"))
 			System.out.println("[ERREUR] Le fichier contient un composant non-accepté ! [Composant : " + type_composant + "]");
 		else
 		{
@@ -176,7 +204,7 @@ public class ChargerFichier
 				nom_tmp = nom_composant.substring(0, 2);
 			else
 			{
-				if(type_composant.equals("AND") || type_composant.equals("XOR") || type_composant.equals("NOT") || type_composant.equals("NOR") || type_composant.equals("OUT"))
+				if(type_composant.equals("AND") || type_composant.equals("XOR") || type_composant.equals("NOT") || type_composant.equals("NOR") || type_composant.equals("OUT") || type_composant.equals("MUX"))
 					nom_tmp = nom_composant.substring(0, 3);
 				else
 					nom_tmp = nom_composant.substring(0, 4);
@@ -184,11 +212,11 @@ public class ChargerFichier
 			if(!nom_tmp.equals(type_composant.toLowerCase()))
 				System.out.println("[ERREUR] Il y a un problème entre le nom du composant (" + nom_composant + ") et le type du composant (" + type_composant + ")");
 			else
-				liste_c.add(new Composant(nom_composant, type_composant)); //le substr passe de 2 à 3 car on ajoute le chiffre dans le nom du composant
+				liste_c.add(new Composant(nom_composant, type_composant, commande)); //le substr passe de 2 à 3 car on ajoute le chiffre dans le nom du composant
 		}
 	}
 	
-	public void traitement_liaison(String ligne, ArrayList<Liaison> liste_l)
+	public void traitement_liaison(String ligne, ArrayList<Liaison> liste_l, ArrayList<Composant> liste_c)
 	{ 
 		String log = new String("\n               :::::::::: LOG TRAITEMENT LIAISON ::::::::::\n\n");
 		//parse les lignes "liaison" pour récupérer les noms de composants
@@ -199,8 +227,15 @@ public class ChargerFichier
 		nom_composant_2 = nom_composant_2.substring(nom_composant_2.indexOf(" ") + 1); 
 		if(!nom_composant_2.contains("out"))
 			nom_composant_2 = nom_composant_2.substring(0, nom_composant_2.indexOf(" "));
-		Composant c1 = new Composant(nom_composant_1, "");
-		Composant c2 = new Composant(nom_composant_2, "");
+		Composant c1 = null;
+		Composant c2 = null;
+		for(int i = 0; i < liste_c.size(); i++)
+		{	
+			if(liste_c.get(i).getNom().equals(nom_composant_1))
+				c1 = liste_c.get(i);
+			if(liste_c.get(i).getNom().equals(nom_composant_2))
+				c2 = liste_c.get(i);
+		}
 		String entree_c2 = new String(); //par defaut, première entrée (pour composant OUT)
 		String sortie_c1 = new String();
 		entree_c2 = supprimer_espaces(ligne.substring(ligne.length()-1));
@@ -237,63 +272,12 @@ public class ChargerFichier
 			this.getListe_noms_composants().add(nom_composant_1);
 			
 		//on commence par regarder le premier composant de la liaison
-		if(!nom_composant_1.contains("in") && !nom_composant_1.contains("or") && !nom_composant_1.contains("nor") && !nom_composant_1.contains("and") && !nom_composant_1.contains("nand") && !nom_composant_1.contains("xor") && !nom_composant_1.contains("xnor") && !nom_composant_1.contains("not") && !nom_composant_1.contains("out"))
+		if(!nom_composant_1.contains("in") && !nom_composant_1.contains("or") && !nom_composant_1.contains("nor") && !nom_composant_1.contains("and") && !nom_composant_1.contains("nand") && !nom_composant_1.contains("xor") && !nom_composant_1.contains("xnor") && !nom_composant_1.contains("not") && !nom_composant_1.contains("out") && !nom_composant_1.contains("mux"))
 			System.out.println("[ERREUR] Le fichier contient un nom de premier composant non-accepté ! [Composant : " + nom_composant_1 + "]");
-		else
-		{
-			if(nom_composant_1.contains("in"))
-				c1.setType("IN");
-			else if(nom_composant_1.contains("or"))
-				c1.setType("OR");
-			else if(nom_composant_1.contains("and"))
-				c1.setType("AND");
-			else if(nom_composant_1.contains("xor"))
-				c1.setType("XOR");
-			else if(nom_composant_1.contains("not"))
-				c1.setType("NOT");
-			else if(nom_composant_1.contains("nor"))
-				c1.setType("NOR");
-			else if(nom_composant_1.contains("nand"))
-				c1.setType("NAND");
-			else if(nom_composant_1.contains("xnor"))
-				c1.setType("XNOR");
-			else //si le premier composant est une sortie OUT
-			{
-				sortie_c1 = null;
-				c1.setType("OUT");
-			}
-		}
 		
 		//on regarde ensuite le deuxième composant de la liaison
-		if(!nom_composant_2.contains("in") && !nom_composant_2.contains("or") && !nom_composant_2.contains("nor") && !nom_composant_2.contains("and") && !nom_composant_2.contains("nand") && !nom_composant_2.contains("xor") && !nom_composant_2.contains("xnor") && !nom_composant_2.contains("not") && !nom_composant_2.contains("out"))
+		if(!nom_composant_2.contains("in") && !nom_composant_2.contains("or") && !nom_composant_2.contains("nor") && !nom_composant_2.contains("and") && !nom_composant_2.contains("nand") && !nom_composant_2.contains("xor") && !nom_composant_2.contains("xnor") && !nom_composant_2.contains("not") && !nom_composant_2.contains("out") && !nom_composant_2.contains("mux"))
 			System.out.println("[ERREUR] Le fichier contient un nom de deuxième composant non-accepté ! [Composant : " + nom_composant_2 + "]");
-		else
-		{
-			if(nom_composant_2.contains("in"))
-			{
-				entree_c2 = null;
-				c2.setType("IN");
-			}
-			else if(nom_composant_2.contains("or"))
-				c2.setType("OR");
-			else if(nom_composant_2.contains("and"))
-				c2.setType("AND");
-			else if(nom_composant_2.contains("xor"))
-				c2.setType("XOR");
-			else if(nom_composant_2.contains("not"))
-				c2.setType("NOT");
-			else if(nom_composant_2.contains("nor"))
-				c2.setType("NOR");
-			else if(nom_composant_2.contains("nand"))
-				c2.setType("NAND");
-			else if(nom_composant_2.contains("xnor"))
-				c2.setType("XNOR");
-			else //si le deuxième composant est une sortie OUT
-			{
-				entree_c2 = null;
-				c2.setType("OUT");
-			}
-		}
 		
 		//si en outre, les entrees et sorties ont été vérifiées, on crée la nouvelle liaison et on l'ajoute à la liste des liaisons du circuit
 		if(verifie)

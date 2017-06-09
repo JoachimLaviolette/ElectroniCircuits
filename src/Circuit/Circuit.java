@@ -167,7 +167,7 @@ public class Circuit
 							}
 						}					
 					}
-					else
+					else if(this.getListe_composants().get(i).getType().equals("NOT"))
 					{
 						if(this.getListe_composants().get(i).getListe_bits_entree().size() > this.getListe_composants().get(i).getNb_entrees())
 							System.out.println("[ERREUR] Composant [NOT] à une entrée. Nombre d'entrées supérieur à 1 !");
@@ -183,6 +183,23 @@ public class Circuit
 							}
 						}
 					}
+					else //si MUX
+					{
+						if(this.getListe_composants().get(i).getListe_bits_entree().size() > this.getListe_composants().get(i).getNb_entrees())
+							System.out.println("[ERREUR] Composant [MUX] à " + this.getListe_composants().get(i).getNb_entrees() + " entrées. Nombre d'entrées supérieur à " + this.getListe_composants().get(i).getNb_entrees() + " !");
+						else
+						{
+							if(this.getListe_composants().get(i).getListe_bits_entree().size() == this.getListe_composants().get(i).getNb_entrees() && this.getListe_composants().get(i).getBit_sortie().equals(""))
+							{
+								int bit_entree_1 = Integer.parseInt(this.getListe_composants().get(i).getBitEntree(Integer.parseInt(this.getListe_composants().get(i).getBit_commande())));
+								String valeur_de_verite = bit_entree_1 + "";
+								this.getListe_composants().get(i).setBit_sortie(valeur_de_verite);
+								String bit_sortie = this.getListe_composants().get(i).getBit_sortie();
+								this.getListe_composants().get(i).getC_successeur().getListe_bits_entree().add(bit_sortie);
+							}
+						}
+					}
+						
 				}
 			}
 		}

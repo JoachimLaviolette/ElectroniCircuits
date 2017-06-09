@@ -150,7 +150,7 @@ public class Circuit
 			{
 				if(!this.getListe_composants().get(i).getType().equals("IN") && !this.getListe_composants().get(i).getType().equals("OUT"))
 				{
-					if(this.getListe_composants().get(i).getType().equals("AND") || this.getListe_composants().get(i).getType().equals("OR") || this.getListe_composants().get(i).getType().equals("XOR"))
+					if(this.getListe_composants().get(i).getType().equals("AND") || this.getListe_composants().get(i).getType().equals("OR") || this.getListe_composants().get(i).getType().equals("XOR") || this.getListe_composants().get(i).getType().equals("XNOR") || this.getListe_composants().get(i).getType().equals("NOR") || this.getListe_composants().get(i).getType().equals("NAND"))
 					{
 						if(this.getListe_composants().get(i).getListe_bits_entree().size() > this.getListe_composants().get(i).getNb_entrees())
 							System.out.println("[ERREUR] Composant [AND/OR/XOR] à deux entrées. Nombre d'entrées supérieur à 2 !" + this.getListe_composants().get(i).getListe_bits_entree().size());

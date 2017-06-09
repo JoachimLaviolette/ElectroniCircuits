@@ -65,7 +65,7 @@ public class GUI_AfficherFichierCharge extends GUI
 	    scroll_p.setBounds(new Rectangle(-4, 1, 397, 198));	   
 				
 		//creation des boutons
-	    bouton_0 = new JButton("EDITER LE CONTENU DU FICHIER");
+	    bouton_0 = new JButton("EDITER LE CONTENU CHARGE");
 	    bouton_0.setBackground(Color.RED);
 	    bouton_0.setBorderPainted(false);
 	    bouton_0.setFocusPainted(false);
@@ -137,7 +137,7 @@ public class GUI_AfficherFichierCharge extends GUI
 			zone_texte.setBackground(Color.BLACK);
 			zone_texte.setForeground(Color.GREEN);		
 			zone_texte.setEditable(false);
-			bouton_0.setText("EDITER LE CONTENU DU FICHIER");
+			bouton_0.setText("EDITER LE CONTENU MODIFIE");
 			bouton_0.setBackground(Color.RED);
 			bouton_0.removeActionListener(this);
 			bouton_0.addActionListener(new EditerContenuFichierListener());

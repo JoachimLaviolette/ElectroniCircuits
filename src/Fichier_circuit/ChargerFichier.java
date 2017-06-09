@@ -167,7 +167,7 @@ public class ChargerFichier
 	{ 	
 		String nom_composant = ligne.substring(ligne.indexOf(" ") + 1, ligne.lastIndexOf(" "));
 		String type_composant = ligne.substring(ligne.lastIndexOf(" ") + 1);
-		if(!type_composant.equals("IN") && !type_composant.equals("OR") && !type_composant.equals("AND") && !type_composant.equals("XOR") && !type_composant.equals("NOT") && !type_composant.equals("OUT"))
+		if(!type_composant.equals("IN") && !type_composant.equals("OR") && !type_composant.equals("NOR") && !type_composant.equals("AND") && !type_composant.equals("NAND") && !type_composant.equals("XOR") && !type_composant.equals("XNOR") && !type_composant.equals("NOT") && !type_composant.equals("OUT"))
 			System.out.println("[ERREUR] Le fichier contient un composant non-accepté ! [Composant : " + type_composant + "]");
 		else
 		{
@@ -175,7 +175,12 @@ public class ChargerFichier
 			if(type_composant.equals("IN") || type_composant.equals("OR"))
 				nom_tmp = nom_composant.substring(0, 2);
 			else
-				nom_tmp = nom_composant.substring(0, 3);
+			{
+				if(type_composant.equals("AND") || type_composant.equals("XOR") || type_composant.equals("NOT") || type_composant.equals("NOR") || type_composant.equals("OUT"))
+					nom_tmp = nom_composant.substring(0, 3);
+				else
+					nom_tmp = nom_composant.substring(0, 4);
+			}
 			if(!nom_tmp.equals(type_composant.toLowerCase()))
 				System.out.println("[ERREUR] Il y a un problème entre le nom du composant (" + nom_composant + ") et le type du composant (" + type_composant + ")");
 			else
@@ -232,7 +237,7 @@ public class ChargerFichier
 			this.getListe_noms_composants().add(nom_composant_1);
 			
 		//on commence par regarder le premier composant de la liaison
-		if(!nom_composant_1.contains("in") && !nom_composant_1.contains("or") && !nom_composant_1.contains("and") && !nom_composant_1.contains("xor") && !nom_composant_1.contains("not") && !nom_composant_1.contains("out"))
+		if(!nom_composant_1.contains("in") && !nom_composant_1.contains("or") && !nom_composant_1.contains("nor") && !nom_composant_1.contains("and") && !nom_composant_1.contains("nand") && !nom_composant_1.contains("xor") && !nom_composant_1.contains("xnor") && !nom_composant_1.contains("not") && !nom_composant_1.contains("out"))
 			System.out.println("[ERREUR] Le fichier contient un nom de premier composant non-accepté ! [Composant : " + nom_composant_1 + "]");
 		else
 		{
@@ -246,6 +251,12 @@ public class ChargerFichier
 				c1.setType("XOR");
 			else if(nom_composant_1.contains("not"))
 				c1.setType("NOT");
+			else if(nom_composant_1.contains("nor"))
+				c1.setType("NOR");
+			else if(nom_composant_1.contains("nand"))
+				c1.setType("NAND");
+			else if(nom_composant_1.contains("xnor"))
+				c1.setType("XNOR");
 			else //si le premier composant est une sortie OUT
 			{
 				sortie_c1 = null;
@@ -254,7 +265,7 @@ public class ChargerFichier
 		}
 		
 		//on regarde ensuite le deuxième composant de la liaison
-		if(!nom_composant_2.contains("in") && !nom_composant_2.contains("or") && !nom_composant_2.contains("and") && !nom_composant_2.contains("xor") && !nom_composant_2.contains("not") && !nom_composant_2.contains("out"))
+		if(!nom_composant_2.contains("in") && !nom_composant_2.contains("or") && !nom_composant_2.contains("nor") && !nom_composant_2.contains("and") && !nom_composant_2.contains("nand") && !nom_composant_2.contains("xor") && !nom_composant_2.contains("xnor") && !nom_composant_2.contains("not") && !nom_composant_2.contains("out"))
 			System.out.println("[ERREUR] Le fichier contient un nom de deuxième composant non-accepté ! [Composant : " + nom_composant_2 + "]");
 		else
 		{
@@ -271,6 +282,12 @@ public class ChargerFichier
 				c2.setType("XOR");
 			else if(nom_composant_2.contains("not"))
 				c2.setType("NOT");
+			else if(nom_composant_2.contains("nor"))
+				c2.setType("NOR");
+			else if(nom_composant_2.contains("nand"))
+				c2.setType("NAND");
+			else if(nom_composant_2.contains("xnor"))
+				c2.setType("XNOR");
 			else //si le deuxième composant est une sortie OUT
 			{
 				entree_c2 = null;
@@ -325,7 +342,7 @@ public class ChargerFichier
 	
 	public boolean controle_entree(String nom_c, String n_e)
 	{
-		if(nom_c.contains("and") || nom_c.contains("or") || nom_c.contains("xor"))
+		if(nom_c.contains("and") || nom_c.contains("or") || nom_c.contains("xor") || nom_c.contains("nor") || nom_c.contains("nand") || nom_c.contains("xnor")) 
 			if(!n_e.equals("1") && !n_e.equals("2"))
 				return false;
 		else if(nom_c.contains("out"))

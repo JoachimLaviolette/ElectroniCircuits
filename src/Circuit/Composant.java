@@ -4,7 +4,7 @@ import java.util.ArrayList;
 public class Composant 
 {
 	private String nom;
-	private String type; //AND, OR, XOR, NOT, IN, OUT
+	private String type; //AND, OR, XOR, NOT, IN, OUT        Nouveaux composants : NOR, NAND, XNOR
 	private float resistance;
 	private ArrayList<String> liste_bits_entree;
 	private String bit_sortie;
@@ -69,18 +69,33 @@ public class Composant
 				this.setValTdv(1,2,"0"); //1 0
 				this.setValTdv(2,2,"1"); //1 1
 				break;
+			case "NAND" :
+				this.setValTdv(1,1,"1");
+				this.setValTdv(2,1,"0");
+				this.setValTdv(1,2,"0");
+				this.setValTdv(2,2,"0");
 			case "OR" : 
 				this.setValTdv(1,1,"0");
 				this.setValTdv(2,1,"1");
 				this.setValTdv(1,2,"1");
 				this.setValTdv(2,2,"1");
 				break;
+			case "NOR" :
+				this.setValTdv(1,1,"1");
+				this.setValTdv(2,1,"0");
+				this.setValTdv(1,2,"0");
+				this.setValTdv(2,2,"0");
 			case "XOR" :
 				this.setValTdv(1,1,"0");
 				this.setValTdv(2,1,"1");
 				this.setValTdv(1,2,"1");
 				this.setValTdv(2,2,"0");
 				break;
+			case "XNOR" :
+				this.setValTdv(1,1,"1");
+				this.setValTdv(2,1,"0");
+				this.setValTdv(1,2,"0");
+				this.setValTdv(2,2,"1");
 			case "NOT" : 
 				this.setValTdv(1,1,"1");
 				this.setValTdv(2,1,"0");

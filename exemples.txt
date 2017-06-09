@@ -61,3 +61,15 @@ liaison in999 1 xor1 1
 liaison in2 1 xor1 2
 liaison xor1 1 not1 1
 liaison not1 1 out1
+
+composant in1 IN
+composant in2 IN
+composant in3 IN
+composant out1 OUT
+composant nand1 NAND
+composant nor1 NOR
+liaison nand1 1 nor1 1
+liaison in3 1 nor1 2
+liaison nor1 1 out1
+liaison in1 1 nand1 1
+liaison in2 1 nand1 2

@@ -22,6 +22,15 @@ public class SauvegarderFichier
 		this.getFichier_circuit().sauvegarder(this.getUrl_fichier_circuit(), this.getNom_fichier_circuit());
 	}
 	
+	public SauvegarderFichier(String url, String nom, String contenu)
+	{
+		this.setContenu(contenu);
+		this.setUrl_fichier_circuit(url);
+		this.setNom_fichier_circuit(nom);
+		this.setFichier_circuit(new FichierCircuit(this.getNom_fichier_circuit(), this.getUrl_fichier_circuit(), contenu));
+		this.getFichier_circuit().sauvegarder(this.getUrl_fichier_circuit(), this.getNom_fichier_circuit());
+	}
+	
 	//-------------------------------------------------- accesseurs et mutateurs --------------------------------------------------//
 	
 	public Scanner getScanner() 
@@ -36,7 +45,7 @@ public class SauvegarderFichier
 	
 	public String getUrl_fichier_circuit() 
 	{
-		return url_fichier_circuit + "/";
+		return url_fichier_circuit;
 	}
 
 	public void setUrl_fichier_circuit(String url_fichier_circuit) 

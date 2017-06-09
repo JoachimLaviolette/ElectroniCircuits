@@ -94,10 +94,31 @@ public class Circuit
 		tdv += " |      Sortie\n";	
 		for(int i = 0; i < (int)Math.pow(2, nb_entrees); i++) //génère des nombres en binaire allant de 0 à 2^k entrées
 		{
-			tdv += "                ";
+			tdv += "                 ";
 			for(int a = 0; a < this.getValTdv(0, i+1).length(); a++) //parcourt la chaine binaire du nombre , ex : 01011 pour générer : "0 1 0 1 1 "
 				tdv += this.getValTdv(0, i+1).charAt(a) + "      ";	//ajoute chaque caractère de la chaine binaire avec un espace entre eux
-			tdv += "|        " + this.getValTdv(1, i+1) + "\n"; //affiche la valeur de vérité au nombre binaire (chaine) 
+			tdv += "  |          " + this.getValTdv(1, i+1) + "\n"; //affiche la valeur de vérité au nombre binaire (chaine) 
+		}
+		return tdv;
+	}
+	
+	public String produire_tdv_graphique()
+	{
+		this.generer_tdv();
+		String tdv = new String("\n:::::::::: TABLE DE VERITE DU CIRCUIT ::::::::::\n\n"); 
+		int nb_entrees = calculer_nb_entrees();
+		String[] entrees = new String[nb_entrees];
+		this.remplir_noms_entrees(entrees);
+		tdv += "";
+		for(int i = 0; i < nb_entrees; i++)
+			tdv += entrees[i] + "    ";
+		tdv += " |      Sortie\n";	
+		for(int i = 0; i < (int)Math.pow(2, nb_entrees); i++) //génère des nombres en binaire allant de 0 à 2^k entrées
+		{
+			tdv += "  ";
+			for(int a = 0; a < this.getValTdv(0, i+1).length(); a++) //parcourt la chaine binaire du nombre , ex : 01011 pour générer : "0 1 0 1 1 "
+				tdv += this.getValTdv(0, i+1).charAt(a) + "      ";	//ajoute chaque caractère de la chaine binaire avec un espace entre eux
+			tdv += "  |          " + this.getValTdv(1, i+1) + "\n"; //affiche la valeur de vérité au nombre binaire (chaine) 
 		}
 		return tdv;
 	}
@@ -106,6 +127,12 @@ public class Circuit
 	{
 		this.setMy_tdv(produire_tdv());
 		System.out.println(this.getMy_tdv());
+	}
+	
+	public String recuperer_tdv()
+	{
+		this.setMy_tdv(produire_tdv_graphique());
+		return this.getMy_tdv();
 	}
 	
 	public String calculer_tdv_sortie(String binaire)
@@ -230,6 +257,50 @@ public class Circuit
 			str += "\n";
 		}
 		str += "\n";
+		return str;
+	}
+	
+	public String afficher_informations_composants_graphique()
+	{
+		String str = "Les informations concernant chaque composant sont les suivantes : \n\n";
+		for(int i = 0; i < this.getNb_composants(); i++)
+		{
+			str += "Le composant : " + this.getListe_composants().get(i).getNom() + " a pour ";
+			if(this.getListe_composants().get(i).getListe_c_predecesseurs().size() > 0)
+			{
+				str += "prédecesseur(s) : ";
+				for(int a = 0; a < this.getListe_composants().get(i).getListe_c_predecesseurs().size(); a++)
+				{	
+					if(a != 0)
+						str += ", ";
+					str += this.getListe_composants().get(i).getListe_c_predecesseurs().get(a).getNom();
+				}
+				if(!this.getListe_composants().get(i).getType().equals("OUT"))
+					str += " et pour ";
+			}
+			if(!this.getListe_composants().get(i).getType().equals("OUT"))
+				str += "successeur : " + this.getListe_composants().get(i).getC_successeur().getNom(); 
+			str += "\n";
+		}
+		str += "\n";
+		return str;
+	}
+	
+	public String recuperer_informations()
+	{
+		String str = new String();
+		str += "\n:::::::::: INFORMATIONS SUR LE CIRCUIT CHARGE ::::::::::\n\n" 
+				+ "Ce circuit comporte : \n\n"
+				+ "" + this.calculer_nb_entrees() + " entrées \n"
+				+ "" + this.getNb_composants() + " composants \n"
+				+ "" + this.getNb_liaisons() + " liaisons \n\n"
+				+ this.afficher_informations_composants_graphique()
+				+ "Ses composants sont : \n\n";
+		for(int i = 0; i < this.getNb_composants(); i++)
+			str += "" + this.getListe_composants().get(i).getChaine() + "\n";
+		str += "\nSes liaisons sont : \n\n";
+		for(int i = 0; i < this.getNb_liaisons(); i++)
+			str += "" + this.getListe_liaisons().get(i).getChaine() + "\n";
 		return str;
 	}
 		

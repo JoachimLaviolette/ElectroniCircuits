@@ -1,0 +1,63 @@
+C:\Users\JoaSTARK\Desktop\aaa.txt
+
+composant in1 IN
+composant in2 IN
+composant in3 IN
+composant out1 OUT
+composant and1 AND
+composant or1 OR
+liaison and1 1 or1 1
+liaison in3 1 or1 2
+liaison or1 1 out1
+liaison in1 1 and1 1
+liaison in2 1 and1 2
+
+composant xor1 XOR
+composant and1 AND
+composant in1 IN
+composant in2 IN
+composant in3 IN
+composant out1 OUT
+liaison and1 1 xor1 1
+liaison xor1 1 out1
+liaison in1 1 and1 1
+liaison in2 1 and1 2
+liaison in3 1 xor1 2
+
+composant in1 IN
+composant in2 IN
+composant and1 AND
+composant out1 OUT
+liaison in1 1 and1 1
+liaison in2 1 and1 2
+liaison and1 1 out1
+
+composant in1 IN
+composant in2 IN
+composant out1 OUT
+composant xor1 XOR
+composant not1 NOT
+liaison in1 1 xor1 1
+liaison in2 1 xor1 2
+liaison xor1 1 not1 1
+liaison not1 1 out1
+
+composant in1 IN
+composant in2 IN
+composant out1 OUT
+composant and1 AND
+composant not1 NOT
+liaison in1 1 and1 1
+liaison in2 1 and1 2
+liaison and1 1 not1 1
+liaison not1 1 out1
+
+composant in999 IN
+composant in2 IN
+composant out1 OUT
+composant xor1 XOR
+composant not1 NOT
+liaison in999 1 xor1 1
+liaison in2 1 xor1 2
+liaison xor1 1 not1 1
+liaison not1 1 out1

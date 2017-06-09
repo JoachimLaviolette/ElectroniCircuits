@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -22,8 +23,18 @@ public class ChargerFichier
 	{
 		this.setScanner(new Scanner(System.in));
 		System.out.println("Saisissez votre url de fichier circuit : ");
-		this.setUrl_fichier_circuit(this.getScanner().nextLine()); 
-		this.setFichier_circuit(new FichierCircuit(null, this.getUrl_fichier_circuit(), null));
+		String url = this.getScanner().nextLine();
+		String nom = url.substring(url.lastIndexOf("\\"), url.lastIndexOf("."));
+		this.setUrl_fichier_circuit(url); 
+		this.setFichier_circuit(new FichierCircuit(nom, this.getUrl_fichier_circuit(), null));
+		this.getFichier_circuit().lire();
+	}
+	
+	public ChargerFichier(String url)
+	{
+		String nom = url.substring(url.lastIndexOf("\\"), url.lastIndexOf("."));
+		this.setUrl_fichier_circuit(url); 
+		this.setFichier_circuit(new FichierCircuit(nom, this.getUrl_fichier_circuit(), null));
 		this.getFichier_circuit().lire();
 	}
 	
@@ -37,6 +48,64 @@ public class ChargerFichier
 			File fichier_circuit = new File(this.getUrl_fichier_circuit());
 		    FileReader lecteur = new FileReader(fichier_circuit);
 		    BufferedReader buffer = new BufferedReader(lecteur);
+		    try
+		    {
+		        String ligne = buffer.readLine();
+		        String debut_chaine = ligne.substring(0,9);
+		        while(ligne != null)
+		        {
+		            debut_chaine = ligne.substring(0,9);
+			        if(debut_chaine.equals("composant"))
+			        	if(compter_occurences(ligne, " ") == 2)
+		        			traitement_composant(ligne, liste_c);
+			        	else
+			        		System.out.println("[ERREUR] Le nombre d'espaces attendu est différent de 2 !\n Ligne : " + ligne + "\n [Nombre d'espaces : " + compter_occurences(ligne, " ") + "]");
+			        else
+			        {
+			        	debut_chaine = ligne.substring(0,7);
+			        	if(debut_chaine.equals("liaison"))
+			        		if((compter_occurences(ligne, " ") == 4  && !ligne.contains("out")) || (compter_occurences(ligne, " ") == 3  && ligne.contains("out")))
+			        			traitement_liaison(ligne, liste_l);
+			        		else
+			        			System.out.println("[ERREUR] Le nombre d'espaces attendu est différent de 2 !\n Ligne : " + ligne + "\n [Nombre d'espaces : " + compter_occurences(ligne, " ") + "]");
+			        	else
+			        		System.out.println("[ERREUR] Le fichier contient une ligne dépréciée ! [Debut de chaine : " + debut_chaine + "]");
+			        }
+			        ligne = buffer.readLine();
+		        }
+		    	System.out.println("\n               :::::::::: LOG MAJ DES PREDECESSEURS ::::::::::\n");
+		        for(int i = 0; i < liste_l.size(); i++)
+		        {
+		        	maj_successeur(liste_l.get(i).getC1(), liste_c);
+					maj_predecesseurs(liste_l.get(i).getC2(), liste_c);
+		        }		       
+		        buffer.close();
+		        lecteur.close();
+		    }
+			catch(IOException e)
+			{
+				System.out.print("[ERREUR] Le fichier n'a pas pu être ouvert... (" + e + ")");
+			}
+		    Circuit c = new Circuit(liste_c, liste_l);
+		    c.mise_a_jour();
+			this.setCircuit_charge(c);
+	    }
+		catch(FileNotFoundException e)
+		{
+			System.out.println("[ERREUR] Le fichier n'a pas été trouvé ! (" + e + ")");
+		}
+	}
+	
+	public void charger_circuit_graphique(String contenu)
+	{
+		ArrayList<Composant> liste_c = new ArrayList<Composant>();
+		ArrayList<Liaison> liste_l = new ArrayList<Liaison>();
+		this.setListe_noms_composants(new ArrayList<String>());
+		try
+		{
+			File fichier_circuit = new File(this.getUrl_fichier_circuit());
+		    FileReader lecteur = new FileReader(fichier_circuit);
+		    BufferedReader buffer = new BufferedReader(new StringReader(contenu));
 		    try
 		    {
 		        String ligne = buffer.readLine();
@@ -294,10 +363,21 @@ public class ChargerFichier
 	public void afficher_resultats()
 	{
 		this.getCircuit_charge().afficher_informations();
-		System.out.println("\n               :::::::::: LISTE DES NOMS DE COMPOSANTS ENREGISTRES ::::::::::\n");
+		System.out.println("\n:::::::::: LISTE DES NOMS DE COMPOSANTS ENREGISTRES ::::::::::\n");
 		for(int a = 0; a < this.getListe_noms_composants().size(); a++)
-			System.out.println("               - " + this.getListe_noms_composants().get(a));
+			System.out.println("- " + this.getListe_noms_composants().get(a));
 		this.getCircuit_charge().afficher_tdv();
+	}
+	
+	public String recuperer_resultats()
+	{
+		String str = new String();
+		str += this.getCircuit_charge().recuperer_informations();
+		str += "\n:::::::::: LISTE DES NOMS DE COMPOSANTS ENREGISTRES ::::::::::\n\n";
+		for(int a = 0; a < this.getListe_noms_composants().size(); a++)
+			str += "- " + this.getListe_noms_composants().get(a) + "\n";
+		str += this.getCircuit_charge().recuperer_tdv();
+		return str;
 	}
 	
 	//-------------------------------------------------- accesseurs et mutateurs --------------------------------------------------//

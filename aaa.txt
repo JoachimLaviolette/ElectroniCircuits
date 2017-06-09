@@ -1,0 +1,11 @@
+composant in1 IN
+composant in2 IN
+composant in3 IN
+composant out1 OUT
+composant and1 AND
+composant or1 OR
+liaison and1 1 or1 1
+liaison in3 1 or1 2
+liaison or1 1 out1
+liaison in1 1 and1 1
+liaison in2 1 and1 2

@@ -45,11 +45,13 @@ public class FichierCircuit
 			catch(IOException e)
 			{
 				System.out.print("[ERREUR] Le fichier n'a pas pu être ouvert... (" + e + ")");
+				contenu = "[ERREUR] Le fichier n'a pas pu être ouvert... (" + e + ")";
 			}
 	    }
 		catch(FileNotFoundException e)
 		{
 			System.out.println("[ERREUR] Le fichier n'a pas été trouvé ! (" + e + ")");
+			contenu = "[ERREUR] Le fichier n'a pas été trouvé ! (" + e + ")";
 		}
 		return contenu;
 	}

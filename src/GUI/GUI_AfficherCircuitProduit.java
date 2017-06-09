@@ -32,7 +32,7 @@ public class GUI_AfficherCircuitProduit extends GUI
 		panneau.setBackground(Color.BLACK);
 				
 		//creation du grid layout du sous panneau
-		GridLayout conteneur_boutons = new GridLayout(4, 1); 
+		GridLayout conteneur_boutons = new GridLayout(6, 1); 
 		conteneur_boutons.setVgap(30);
 		conteneur_boutons.setHgap(10);
 		
@@ -96,6 +96,8 @@ public class GUI_AfficherCircuitProduit extends GUI
 		sous_panneau_1.add(panneau_infos);
 		sous_panneau_1.add(pa);
 		sous_panneau_1.add(bouton_i3);
+		sous_panneau_1.add(bouton_i4);
+		sous_panneau_1.add(bouton_i5);
 		
 		//ajout des événements aux boutons
 		bouton_1.addActionListener(new RevenirMenuPrincipalListener());

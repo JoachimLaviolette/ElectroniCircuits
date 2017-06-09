@@ -7,6 +7,7 @@ public class Composant
 	private String type; //AND, OR, XOR, NOT, IN, OUT        Nouveaux composants : NOR, NAND, XNOR
 	private float resistance;
 	private ArrayList<String> liste_bits_entree;
+	private String bit_commande = "";
 	private String bit_sortie;
 	private int nb_entrees;
 	private int nb_sorties;
@@ -15,17 +16,19 @@ public class Composant
 	private String tdv[][]; //table de verite d'un composant
 	private String chaine;
 	
-	public Composant(String nom_c, String type_c)
+	public Composant(String nom_c, String type_c, String commande)
 	{
 		this.setNom(nom_c);
 		this.setType(type_c);
 		this.setListe_bits_entree(new ArrayList<String>());
-		this.initialiser_nb_entrees_sorties();	
+		if(commande != null)
+			this.setBit_commande(this.traitement_bit_commande(commande));
+		this.initialiser_nb_entrees_sorties(commande);	
 		this.setListe_c_predecesseurs(new ArrayList<Composant>());
 		this.initialiser_tdv();
 	}	
 	
-	public void initialiser_nb_entrees_sorties()
+	public void initialiser_nb_entrees_sorties(String commande)
 	{
 		//entrees (0 pour in)
 		if(this.getType().equals("IN"))
@@ -34,11 +37,37 @@ public class Composant
 			this.setNb_entrees(1);
 		else
 			this.setNb_entrees(2);
+		if(this.getType().equals("MUX"))
+			if(commande != null)
+				this.setNb_entrees(this.traitement_binaire(commande));
 		//sorties (0 pour out)
 		if(this.getType().equals("OUT"))
 			this.setNb_sorties(0);
 		else
 			this.setNb_sorties(1);
+	}
+	
+	public int traitement_binaire(String commande)
+	{
+		int nb_e = 0;
+		for(int i = 0; i < commande.length(); i++)
+			if(commande.charAt(i) != '0' && commande.charAt(i) != '1')
+				System.out.println("[ERREUR] La chaine binaire du multiplexeur contient autre chose que des 0 et des 1 !");
+			else
+				nb_e++;
+		nb_e = (int)Math.pow(2, nb_e);
+		return nb_e;
+	}
+	
+	public String traitement_bit_commande(String commande)
+	{
+		for(int i = 0; i < commande.length(); i++)
+			if(commande.charAt(i) != '0' && commande.charAt(i) != '1')
+			{
+				System.out.println("[ERREUR] La chaine binaire du multiplexeur contient autre chose que des 0 et des 1 !");
+				return "[ERREUR] La chaine binaire du multiplexeur contient autre chose que des 0 et des 1 !";
+			}
+		return Integer.parseInt(commande, 2) + "";	//si commande = "011", la fonction renverra "3"	
 	}
 	
 	public void initialiser_tdv()
@@ -240,5 +269,15 @@ public class Composant
 	public void setChaine(String chaine) 
 	{
 		this.chaine = chaine;
+	}
+
+	public String getBit_commande() 
+	{
+		return this.bit_commande;
+	}
+	
+	public void setBit_commande(String bit_commmande) 
+	{
+		this.bit_commande = bit_commmande;
 	}
 }

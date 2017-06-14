@@ -33,7 +33,7 @@ public class GUI extends JFrame
 		panneau.setBackground(Color.BLACK);
 				
 		//creation du grid layout du sous panneau
-		GridLayout conteneur_boutons = new GridLayout(9, 1); 
+		GridLayout conteneur_boutons = new GridLayout(8, 1); 
 		conteneur_boutons.setVgap(30);
 		conteneur_boutons.setHgap(10);
 		
@@ -63,14 +63,10 @@ public class GUI extends JFrame
 		bouton_3.setBackground(Color.WHITE);
 		bouton_3.setBorderPainted(false);
 		bouton_3.setFocusPainted(false);
-		JButton bouton_4 = new JButton("MODIFIER UN CIRCUIT DEPUIS UN FICHIER");
+		JButton bouton_4 = new JButton("QUITTER");
 		bouton_4.setBackground(Color.WHITE);
 		bouton_4.setBorderPainted(false);
 		bouton_4.setFocusPainted(false);
-		JButton bouton_5 = new JButton("QUITTER");
-		bouton_5.setBackground(Color.WHITE);
-		bouton_5.setBorderPainted(false);
-		bouton_5.setFocusPainted(false);
 		
 		//modification des tailles des boutons
 		/*bouton_1.setSize(new Dimension(30, 5));
@@ -94,14 +90,12 @@ public class GUI extends JFrame
 		sous_panneau_1.add(bouton_2);
 		sous_panneau_1.add(bouton_3);
 		sous_panneau_1.add(bouton_4);
-		sous_panneau_1.add(bouton_5);
 		
 		//ajout des événements aux boutons
 		bouton_1.addActionListener(new CreerFichierListener());
 		bouton_2.addActionListener(new ChargerFichierListener());
 		bouton_3.addActionListener(new EditerFichierListener());
-		bouton_4.addActionListener(new ModifierCircuitListener());
-		bouton_5.addActionListener(new QuitterApplicationListener());
+		bouton_4.addActionListener(new QuitterApplicationListener());
 		
 		//ajout du sous panneau au panneau principal
 		panneau.add(sous_panneau_1);
@@ -134,14 +128,6 @@ public class GUI extends JFrame
 		{
 			dispose();
 			new GUI_EditerFichier();
-		}
-	}
-	
-	class ModifierCircuitListener implements ActionListener
-	{
-		public void actionPerformed(ActionEvent e) 
-		{
-			
 		}
 	}
 	

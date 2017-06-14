@@ -77,52 +77,15 @@ public class FichierCircuit
 			catch (IOException e)
 			{
 				System.out.print("[ERREUR] Le fichier n'a pas pu être ouvert... (" + e + ")");
+				this.setContenu("[ERREUR] Le fichier n'a pas pu être ouvert... (" + e + ")");
 			}	
 	    }
 		catch(IOException e)
 		{
 			System.out.println("[ERREUR] Le fichier n'a pas été trouvé ! (" + e + ")");
+			this.setContenu("[ERREUR] Le fichier n'a pas été trouvé ! (" + e + ")");
 		}
 	}
-	
-	public void editer()
-	{
-		//TODO
-	}
-	
-	/*
-	 * FONCTIONS A IMPLEMENTER PLUS TARD
-	
-		public void ajouterComposant(Composant c)
-		{
-			//TODO
-		}
-		
-		public void supprimerComposant(Composant c)
-		{
-			//TODO
-		}
-		
-		public void ajouterAmperemetre(Amperemetre a)
-		{
-			//TODO
-		}
-		
-		public void supprimerAmperemetre(Amperemetre a)
-		{
-			//TODO
-		}
-		
-		public void ajouterVoltmetre(Voltmetre v)
-		{
-			//TODO
-		}
-		
-		public void supprimerVoltmetre(Voltmetre v)
-		{
-			//TODO
-		}
-	*/
 	
 	//-------------------------------------------------- accesseurs et mutateurs --------------------------------------------------//
 

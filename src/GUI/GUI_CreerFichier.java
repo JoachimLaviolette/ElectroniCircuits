@@ -2,7 +2,9 @@ package GUI;
 
 import Circuit.*;
 import Fichier_circuit.*;
+
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.*;
 
@@ -140,25 +142,96 @@ public class GUI_CreerFichier extends GUI
 			String contenu = zone_texte.getText();
 			if(!url.equals("") && url != null && !nom.equals("") && nom != null)
 			{
-				if(nom.length() > 3)
+				if(verifier_espaces(url))
 				{
-					String ext = nom.substring(nom.length() - 4);
-					if(ext.equals(".txt"))
-						nom = nom.substring(0, nom.indexOf("."));
+					if(verifier_espaces(nom))
+					{
+						if(url.contains("\\"))
+						{
+							supprimer_espaces(nom);
+							supprimer_espaces(url);
+							if(nom.length() > 3)
+							{
+								String ext = nom.substring(nom.length() - 4);
+								if(ext.equals(".txt"))
+									nom = nom.substring(0, nom.indexOf("."));
+							}
+							while(url.substring(url.length() - 1).equals("\\"))
+								url = url.substring(0, url.length() - 1);
+							SauvegarderFichier s = new SauvegarderFichier(url, nom, contenu);
+							if(!s.getFichier_circuit().getContenu().contains("ERREUR"))
+							{
+								JOptionPane succes = new JOptionPane();
+								succes.showMessageDialog(null, "Votre fichier circuit a bien été sauvegardé !", "Succès de sauvegarde", JOptionPane.INFORMATION_MESSAGE);
+								dispose();
+								new GUI();
+							}
+							else
+							{
+								JOptionPane erreur = new JOptionPane();
+								erreur.showMessageDialog(null, "Le dossier de sauvegarde indiqué n'existe pas !", "Erreur lors de la saisie de chemin", JOptionPane.ERROR_MESSAGE);
+							}
+						}
+						else
+						{
+							JOptionPane erreur = new JOptionPane();
+							erreur.showMessageDialog(null, "Le format de l'URL de fichier saisie est incorrect !", "Erreur lors de la saisie de chemin", JOptionPane.ERROR_MESSAGE);
+						}
+					}
+					else
+					{
+						JOptionPane erreur = new JOptionPane();
+						erreur.showMessageDialog(null, "Vous n'avez saisi aucun nom de fichier !", "Erreur lors de la saisie de nom", JOptionPane.ERROR_MESSAGE);
+					}
 				}
-				while(url.substring(url.length() - 1).equals("/"))
-					url = url.substring(0, url.length() - 1);
-				SauvegarderFichier s = new SauvegarderFichier(url, nom, contenu);
-				JOptionPane erreur = new JOptionPane();
-				erreur.showMessageDialog(null, "Votre fichier circuit a bien été sauvegardé !", "Succès de sauvegarde", JOptionPane.INFORMATION_MESSAGE);
-				dispose();
-				new GUI();
+				else
+				{
+					JOptionPane erreur = new JOptionPane();
+					erreur.showMessageDialog(null, "Vous n'avez saisi aucune URL de fichier !", "Erreur lors de la saisie de chemin", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 			else
 			{
-				JOptionPane erreur = new JOptionPane();
-				erreur.showMessageDialog(null, "Votre fichier n'a pas pu être sauvegardé. Vérifez le nom et le chemin du dossier de sauvegarde !", "Erreur de sauvegarde", JOptionPane.ERROR_MESSAGE);
+				if(verifier_espaces(url))
+				{
+					if(!verifier_espaces(nom))
+					{
+						JOptionPane erreur = new JOptionPane();
+						erreur.showMessageDialog(null, "Votre fichier n'a pas pu être sauvegardé. Aucun nom n'a été saisi !", "Erreur de sauvegarde", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				else
+				{
+					if(verifier_espaces(nom))
+					{
+						JOptionPane erreur = new JOptionPane();
+						erreur.showMessageDialog(null, "Votre fichier n'a pas pu être sauvegardé. Aucun chemin n'a été saisi !", "Erreur de sauvegarde", JOptionPane.ERROR_MESSAGE);
+					}
+					else
+					{
+						JOptionPane erreur = new JOptionPane();
+						erreur.showMessageDialog(null, "Votre fichier n'a pas pu être sauvegardé. Aucun champ n'a été rempli !", "Erreur de sauvegarde", JOptionPane.ERROR_MESSAGE);
+					}
+				}				
 			}
-		}		
+		}
+	
+		public boolean verifier_espaces(String url)
+		{
+			String u = new String(url);
+			for(int i = 0; i < u.length(); i++)
+				if(!(u.charAt(i) + "").equals(" "))
+					return true;
+			return false;
+		}
+		
+		public String supprimer_espaces(String url)
+		{
+			String str = new String();
+			for(int i = 0; i < url.length(); i++)
+				if(!((url.charAt(i) + "").equals(" ")))
+					str += url.charAt(i);
+			return str;
+		}
 	}
 }

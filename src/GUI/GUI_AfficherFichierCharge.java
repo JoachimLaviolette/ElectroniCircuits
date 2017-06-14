@@ -150,14 +150,8 @@ public class GUI_AfficherFichierCharge extends GUI
 		{
 			ChargerFichier c = new ChargerFichier(url);
 			c.charger_circuit_graphique(contenu);
-			//appelle le manager ChargerFichier
-			//recupere une reponse
-			//genere boite de commande information ou erreur
-			//si correcte
 			dispose();
-			//puis
-			//ferme la fenetre et en ouvre une nouvelle avec les informations circuit et sa table de vérité		
-			new GUI_AfficherCircuitProduit(c);
+			new GUI_AfficherCircuitProduit(c);				
 		}		
 	}
 	

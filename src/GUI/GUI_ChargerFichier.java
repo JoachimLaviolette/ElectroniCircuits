@@ -123,34 +123,70 @@ public class GUI_ChargerFichier extends GUI
 			String contenu = "";
 			if(!url.equals("") && url != null)
 			{	
-				url = champ_saisie_url.getText();
-				System.out.println(url);
-				nom = url.substring(url.lastIndexOf("\\"));
-				nom = nom.substring(1, nom.length() - 4);
-				ChargerFichier c = new ChargerFichier(url);
-				contenu = c.getFichier_circuit().getContenu();
-				//on vire les "null"
-				contenu = contenu.replace("null", "");
-				contenu = contenu.substring(0, contenu.length() - 2);
-				System.out.println(nom);
-				if(contenu.contains("ERREUR"))
+				if(verifier_espaces(url))
 				{
-					JOptionPane erreur = new JOptionPane();
-					erreur.showMessageDialog(null, contenu, "Erreur lors du chargement de fichier", JOptionPane.ERROR_MESSAGE);
+					if(url.contains("\\"))
+					{
+						url = champ_saisie_url.getText();
+						url = supprimer_espaces(url);
+						if(url.contains("\\"))
+						{
+							nom = url.substring(url.lastIndexOf("\\"));
+							nom = nom.substring(1, nom.length() - 4);
+						}
+						ChargerFichier c = new ChargerFichier(url);
+						contenu = c.getFichier_circuit().getContenu();
+						//on vire les "null" apparents dans le fichier si encodé en UTF-8
+						contenu = contenu.replaceAll("null", "");
+						contenu = contenu.substring(0, contenu.length() - 2);
+						if(contenu.contains("ERREUR"))
+						{
+							JOptionPane erreur = new JOptionPane();
+							erreur.showMessageDialog(null, "Le fichier n'a pas été trouvé !", "Erreur lors du chargement de fichier", JOptionPane.ERROR_MESSAGE);
+						}
+						else
+						{		
+							JOptionPane succes = new JOptionPane();
+							succes.showMessageDialog(null, "Votre fichier circuit a bien été chargé !", "Succès de chargement", JOptionPane.INFORMATION_MESSAGE);
+							dispose();
+							new GUI_AfficherFichierCharge(url, nom, contenu);
+						}
+					}
+					else
+					{
+						JOptionPane erreur = new JOptionPane();
+						erreur.showMessageDialog(null, "Le format de l'URL de fichier saisie est incorrect !", "Erreur lors de la saisie de chemin", JOptionPane.ERROR_MESSAGE);
+					}
 				}
 				else
-				{		
-					JOptionPane succes = new JOptionPane();
-					succes.showMessageDialog(null, "Votre fichier circuit a bien été chargé !", "Succès de chargement", JOptionPane.INFORMATION_MESSAGE);
-					dispose();
-					new GUI_AfficherFichierCharge(url, nom, contenu);
-				}
+				{
+					JOptionPane erreur = new JOptionPane();
+					erreur.showMessageDialog(null, "Vous n'avez saisi aucune URL de fichier !", "Erreur lors du chargement de fichier", JOptionPane.ERROR_MESSAGE);
+				}				
 			}
 			else
 			{
 				JOptionPane erreur = new JOptionPane();
 				erreur.showMessageDialog(null, "Vous n'avez saisi aucune URL de fichier !", "Erreur lors du chargement de fichier", JOptionPane.ERROR_MESSAGE);
 			}			
-		}		
+		}
+		
+		public boolean verifier_espaces(String url)
+		{
+			String u = new String(url);
+			for(int i = 0; i < u.length(); i++)
+				if(!(u.charAt(i) + "").equals(" "))
+					return true;
+			return false;
+		}
+		
+		public String supprimer_espaces(String url)
+		{
+			String str = new String();
+			for(int i = 0; i < url.length(); i++)
+				if(!((url.charAt(i) + "").equals(" ")))
+					str += url.charAt(i);
+			return str;
+		}
 	}
 }

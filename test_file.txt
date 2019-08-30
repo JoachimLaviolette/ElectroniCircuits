@@ -1,0 +1,7 @@
+composant in1 IN
+composant in2 IN
+composant out1 OUT
+composant mux1 MUX 0
+liaison mux1 1 out1
+liaison in2 1 mux1 2
+liaison in1 1 mux1 1

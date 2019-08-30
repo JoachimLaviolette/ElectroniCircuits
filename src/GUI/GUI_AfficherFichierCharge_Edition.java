@@ -69,11 +69,7 @@ public class GUI_AfficherFichierCharge_Edition extends GUI
 	    bouton_0 = new JButton("SAUVEGARDER LE FICHIER CIRCUIT");
 	    bouton_0.setBackground(Color.RED);
 	    bouton_0.setBorderPainted(false);
-	    bouton_0.setFocusPainted(false);
-		JButton bouton_1 = new JButton("PRODUIRE LE CIRCUIT");
-		bouton_1.setBackground(Color.GREEN);
-		bouton_1.setBorderPainted(false);
-		bouton_1.setFocusPainted(false);
+	    bouton_0.setFocusPainted(false);		
 		JButton bouton_2 = new JButton("REVENIR AU MENU PRINCIPAL");
 		bouton_2.setBackground(Color.ORANGE);
 		bouton_2.setBorderPainted(false);
@@ -90,13 +86,12 @@ public class GUI_AfficherFichierCharge_Edition extends GUI
 		bouton_i3.setVisible(false);
 				
 		//creation panneau actions
-		JPanel pa = new JPanel(new GridLayout(5, 1));
+		JPanel pa = new JPanel(new GridLayout(4, 1));
 		pa.setBackground(Color.BLACK);
 		pa.add(bouton_0);
 		pa.add(bouton_i2);
-		pa.add(bouton_1);
-		pa.add(bouton_i3);
 		pa.add(bouton_2);
+		pa.add(bouton_i3);
 		
 		//ajout des boutons au panneau
 		sous_panneau_1.add(bouton_i0);
@@ -106,7 +101,6 @@ public class GUI_AfficherFichierCharge_Edition extends GUI
 		
 		//ajout des événements aux boutons
 		bouton_0.addActionListener(new SauvegarderFichierListener_Edition());
-		bouton_1.addActionListener(new ProduireCircuitListener());
 		bouton_2.addActionListener(new RevenirMenuPrincipalListener());
 		
 		//ajout du sous panneau au panneau principal
@@ -142,26 +136,9 @@ public class GUI_AfficherFichierCharge_Edition extends GUI
 			{	
 				JOptionPane succes = new JOptionPane();
 				succes.showMessageDialog(null, "Votre fichier circuit a bien été sauvegardé !", "Succès de sauvegarde", JOptionPane.INFORMATION_MESSAGE);
-				bouton_0.setBackground(Color.WHITE);
-				bouton_0.setEnabled(false);
+				//bouton_0.setBackground(Color.WHITE);
+				//bouton_0.setEnabled(false);
 			}	
-		}		
-	}
-		
-	class ProduireCircuitListener implements ActionListener
-	{
-		public void actionPerformed(ActionEvent e) 
-		{
-			ChargerFichier c = new ChargerFichier(url);
-			c.charger_circuit();
-			//appelle le manager ChargerFichier
-			//recupere une reponse
-			//genere boite de commande information ou erreur
-			//si correcte
-			dispose();
-			//puis
-			//ferme la fenetre et en ouvre une nouvelle avec les informations circuit et sa table de vérité		
-			new GUI_AfficherCircuitProduit(c);
 		}		
 	}
 	
